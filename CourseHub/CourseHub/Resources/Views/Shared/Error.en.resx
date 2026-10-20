@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Eroare" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Ups! Ceva n-a mers bine" xml:space="preserve">
+    <value>Oops! Something went wrong</value>
+  </data>
+  <data name="Ne pare rău, dar a apărut o eroare în timpul procesării cererii dumneavoastră." xml:space="preserve">
+    <value>We're sorry, but an error occurred while processing your request.</value>
+  </data>
+  <data name="ID cerere" xml:space="preserve">
+    <value>Request ID</value>
+  </data>
+  <data name="Înapoi la pagina principală" xml:space="preserve">
+    <value>Return Home</value>
+  </data>
+  <data name="Mod dezvoltare" xml:space="preserve">
+    <value>Development Mode</value>
+  </data>
+  <data name="Comutarea la mediul de Dezvoltare va afișa informații mai detaliate despre eroare." xml:space="preserve">
+    <value>Swapping to Development environment will display more detailed information about the error.</value>
+  </data>
+  <data name="Important" xml:space="preserve">
+    <value>Important</value>
+  </data>
+  <data name="Mediul de Dezvoltare nu ar trebui activat pentru aplicațiile publicate. Poate duce la afișarea unor informații sensibile din excepții către utilizatorii finali." xml:space="preserve">
+    <value>The Development environment shouldn't be enabled for deployed applications. It can result in displaying sensitive information from exceptions to end users.</value>
+  </data>
+</root>

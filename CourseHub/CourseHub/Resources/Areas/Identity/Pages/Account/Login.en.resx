@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Autentificare" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Bine ai revenit" xml:space="preserve">
+    <value>Welcome Back</value>
+  </data>
+  <data name="Autentifică-te pentru a continua să înveți" xml:space="preserve">
+    <value>Sign in to continue learning</value>
+  </data>
+  <data name="Email sau nume de utilizator" xml:space="preserve">
+    <value>Email or Username</value>
+  </data>
+  <data name="Introdu emailul sau numele de utilizator" xml:space="preserve">
+    <value>Enter your email or username</value>
+  </data>
+  <data name="Parolă" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Introdu parola" xml:space="preserve">
+    <value>Enter your password</value>
+  </data>
+  <data name="Ține-mă minte" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="Ai uitat parola?" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="Înregistrează-te ca utilizator nou" xml:space="preserve">
+    <value>Register as a new user</value>
+  </data>
+  <data name="Retrimite confirmarea prin email" xml:space="preserve">
+    <value>Resend email confirmation</value>
+  </data>
+</root>

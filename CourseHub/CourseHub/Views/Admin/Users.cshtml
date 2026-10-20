@@ -1,0 +1,460 @@
+﻿@model List<CourseHub.Models.ApplicationUser>
+@{
+    ViewData["Title"] = Localizer["Utilizatori"];
+    var adminIds = ViewBag.AdminIds as HashSet<string> ?? new HashSet<string>();
+    var rolesByUserId = ViewBag.RolesByUserId as Dictionary<string, IList<string>> ?? new Dictionary<string, IList<string>>();
+    var currentUserId = ViewBag.CurrentUserId as string;
+    var confirmDeleteText = Localizer["Sigur vrei să ștergi acest cont? Toate mesajele, cererile și avatarul asociate vor fi șterse permanent."].Value;
+    var confirmBanTemplate = Localizer["Sigur vrei să aplici '{1}' pentru {0}?"].Value;
+    var blockedUntilLabel = Localizer["Blocat până la"].Value;
+    var permanentlyBlockedLabel = Localizer["Blocat permanent"].Value;
+}
+
+<style>
+    .admin-page {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px 0 40px;
+    }
+
+    .admin-title {
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .admin-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    .admin-nav {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+    }
+
+    .admin-nav a {
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid #e5e7eb;
+        color: #374151;
+    }
+
+        .admin-nav a:hover {
+            border-color: #1f2937;
+            color: #1f2937;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .admin-nav a.active {
+            background: #1f2937;
+            border-color: #1f2937;
+            color: white;
+        }
+
+    .admin-alert {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+        .admin-alert.success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #16a34a;
+        }
+
+        .admin-alert.error {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #dc2626;
+        }
+
+    .users-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .user-row {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid #f3f4f6;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        transition: all 0.3s ease;
+    }
+
+        .user-row:hover {
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .user-row.is-me {
+            border-color: #dbeafe;
+            background: #f8fbff;
+        }
+
+        .user-row.is-banned {
+            border-color: #fecaca;
+            background: #fffafa;
+        }
+
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #1f2937;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .user-info {
+        flex: 1;
+        min-width: 160px;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .user-email {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .role-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.02em;
+    }
+
+        .role-badge.teach {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .role-badge.learn {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .role-badge.admin {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .role-badge.me {
+            background: #e5e7eb;
+            color: #4b5563;
+        }
+
+        .role-badge.banned {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+    /* Small, subdued tags showing the raw Identity role table entries - admin-only detail,
+       deliberately understated compared to the main role-badge pills above. */
+    .role-table-tags {
+        margin-top: 4px;
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .role-table-tag {
+        font-size: 10px;
+        font-family: 'Courier New', monospace;
+        color: #9ca3af;
+        background: #f9fafb;
+        border: 1px solid #f3f4f6;
+        border-radius: 4px;
+        padding: 1px 6px;
+    }
+
+    .user-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+    }
+
+    .btn-user-action {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-toggle-admin {
+        background: transparent;
+        border: 1.5px solid #2563eb;
+        color: #2563eb;
+    }
+
+        .btn-toggle-admin:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+    .btn-toggle-admin.is-admin {
+        border-color: #b45309;
+        color: #b45309;
+    }
+
+        .btn-toggle-admin.is-admin:hover {
+            background: #b45309;
+            color: white;
+        }
+
+    .btn-messages {
+        background: transparent;
+        border: 1.5px solid #6b7280;
+        color: #6b7280;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .btn-messages:hover {
+            background: #6b7280;
+            color: white;
+            text-decoration: none;
+        }
+
+    .ban-select {
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1.5px solid #dc2626;
+        color: #dc2626;
+        background: white;
+        cursor: pointer;
+    }
+
+    .btn-delete-user {
+        background: transparent;
+        border: 1.5px solid #dc2626;
+        color: #dc2626;
+    }
+
+        .btn-delete-user:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+    @@media (max-width: 560px) {
+        .user-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .user-actions {
+            width: 100%;
+        }
+
+            .user-actions form,
+            .user-actions button,
+            .user-actions a,
+            .user-actions select {
+                flex: 1;
+            }
+    }
+</style>
+
+<div class="admin-page">
+    <h1 class="admin-title">@Localizer["Utilizatori"]</h1>
+    <p class="admin-subtitle">@Localizer["Gestionează conturile și rolurile de administrator"]</p>
+
+    <div class="admin-nav">
+        <a href="/Admin">@Localizer["Panou de control"]</a>
+        <a href="/Admin/Users" class="active">@Localizer["Utilizatori"]</a>
+        <a href="/Admin/Topics">@Localizer["Materii"]</a>
+    </div>
+
+    @if (TempData["AdminMessage"] != null)
+    {
+        <div class="admin-alert success">@TempData["AdminMessage"]</div>
+    }
+    @if (TempData["AdminError"] != null)
+    {
+        <div class="admin-alert error">@TempData["AdminError"]</div>
+    }
+
+    <div class="users-list">
+        @foreach (var user in Model)
+        {
+            var initial = !string.IsNullOrEmpty(user.UserName) ? user.UserName[0].ToString().ToUpper() : "?";
+            var isAdmin = adminIds.Contains(user.Id);
+            var isMe = user.Id == currentUserId;
+            var identityRoles = rolesByUserId.TryGetValue(user.Id, out var roles) ? roles : new List<string>();
+            var isBanned = user.BannedUntil.HasValue && user.BannedUntil.Value > DateTime.UtcNow;
+            var isPermanentBan = isBanned && user.BannedUntil!.Value == DateTime.MaxValue;
+            var banText = isPermanentBan
+                ? permanentlyBlockedLabel
+                : $"{blockedUntilLabel} {user.BannedUntil?.ToLocalTime():dd MMM yyyy HH:mm}";
+
+            <div class="user-row @(isMe ? "is-me" : "") @(isBanned ? "is-banned" : "")">
+                <div class="user-avatar">
+                    @if (!string.IsNullOrEmpty(user.AvatarPath))
+                    {
+                        <img src="@user.AvatarPath" alt="" />
+                    }
+                    else
+                    {
+                        @initial
+                    }
+                </div>
+                <div class="user-info">
+                    <div class="user-name">
+                        @user.UserName
+                        @if (user.Role == "Teach")
+                        {
+                            <span class="role-badge teach">@Localizer["Predă"]</span>
+                        }
+                        else if (user.Role == "Learn")
+                        {
+                            <span class="role-badge learn">@Localizer["Învață"]</span>
+                        }
+                        @if (isAdmin)
+                        {
+                            <span class="role-badge admin">@Localizer["Admin"]</span>
+                        }
+                        @if (isMe)
+                        {
+                            <span class="role-badge me">@Localizer["Tu"]</span>
+                        }
+                        @if (isBanned)
+                        {
+                            <span class="role-badge banned">@banText</span>
+                        }
+                    </div>
+                    <div class="user-email">@user.Email</div>
+                    @if (identityRoles.Count > 0)
+                    {
+                        <div class="role-table-tags" title="@Localizer["Roluri din tabela AspNetRoles"]">
+                            @foreach (var roleName in identityRoles)
+                            {
+                                <span class="role-table-tag">@roleName</span>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="user-actions">
+                    <a href="/Admin/UserMessages?id=@user.Id" class="btn-messages">@Localizer["Mesaje"]</a>
+
+                    @if (!isMe)
+                    {
+                        <form method="post" asp-action="ToggleAdmin" asp-controller="Admin">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn-user-action btn-toggle-admin @(isAdmin ? "is-admin" : "")">
+                                @(isAdmin ? Localizer["Elimină admin"] : Localizer["Fă administrator"])
+                            </button>
+                        </form>
+
+                        @if (!isAdmin)
+                        {
+                            <form method="post" asp-action="BanUser" asp-controller="Admin">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                <select name="duration" class="ban-select js-confirm-ban" data-username="@user.UserName">
+                                    <option value="" disabled selected>@Localizer["Blochează..."]</option>
+                                    <option value="1d">@Localizer["1 zi"]</option>
+                                    <option value="7d">@Localizer["7 zile"]</option>
+                                    <option value="1m">@Localizer["1 lună"]</option>
+                                    <option value="permanent">@Localizer["Permanent"]</option>
+                                    @if (isBanned)
+                                    {
+                                        <option value="unban">@Localizer["Deblochează"]</option>
+                                    }
+                                </select>
+                            </form>
+                        }
+
+                        <form method="post" asp-action="DeleteUser" asp-controller="Admin" class="js-confirm-delete">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn-user-action btn-delete-user">@Localizer["Șterge"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var confirmDeleteText = @Html.Raw(Json.Serialize(confirmDeleteText));
+            document.querySelectorAll('.js-confirm-delete').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
+                    if (!confirm(confirmDeleteText)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            var confirmBanTemplate = @Html.Raw(Json.Serialize(confirmBanTemplate));
+            document.querySelectorAll('.js-confirm-ban').forEach(function (select) {
+                select.addEventListener('change', function () {
+                    var username = select.getAttribute('data-username');
+                    var label = select.options[select.selectedIndex].text;
+                    var message = confirmBanTemplate.replace('{0}', username).replace('{1}', label);
+
+                    if (confirm(message)) {
+                        select.closest('form').submit();
+                    } else {
+                        select.selectedIndex = 0;
+                    }
+                });
+            });
+        })();
+    </script>
+}

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Te rugăm să selectezi un rol" xml:space="preserve">
+    <value>Please select a role</value>
+  </data>
+  <data name="Nivelul de studii este obligatoriu" xml:space="preserve">
+    <value>Education level is required</value>
+  </data>
+  <data name="Nivelul de experiență este obligatoriu" xml:space="preserve">
+    <value>Experience level is required</value>
+  </data>
+  <data name="Vârsta este obligatorie" xml:space="preserve">
+    <value>Age is required</value>
+  </data>
+  <data name="Te rugăm să introduci o vârstă validă (1-120)" xml:space="preserve">
+    <value>Please enter a valid age (1-120)</value>
+  </data>
+  <data name="Genul este obligatoriu" xml:space="preserve">
+    <value>Gender is required</value>
+  </data>
+  <data name="Te rugăm să selectezi cel puțin o materie" xml:space="preserve">
+    <value>Please select at least one subject</value>
+  </data>
+  <data name="Poți selecta maximum 3 materii" xml:space="preserve">
+    <value>You can select maximum 3 subjects</value>
+  </data>
+</root>

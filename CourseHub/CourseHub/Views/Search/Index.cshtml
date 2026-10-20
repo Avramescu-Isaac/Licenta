@@ -1,0 +1,412 @@
+@model CourseHub.Models.UserSearchViewModel
+@{
+    ViewData["Title"] = Localizer["Caută profesori sau elevi"];
+
+    var isEnglish = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "en";
+
+    string FormatTopics(CourseHub.Models.ApplicationUser user)
+    {
+        var names = string.IsNullOrEmpty(user.SelectedTopics)
+            ? new List<string>()
+            : Model.Topics
+                .Where(t => user.SelectedTopics.Split(',').Contains(t.Id.ToString()))
+                .Select(t => t.Name)
+                .ToList();
+
+        if (names.Count == 0) return isEnglish ? "various subjects" : "diverse materii";
+        if (names.Count == 1) return names[0];
+
+        var conjunction = isEnglish ? "and" : "și";
+        return string.Join(", ", names.Take(names.Count - 1)) + " " + conjunction + " " + names.Last();
+    }
+}
+
+<style>
+    .search-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px 0 40px;
+    }
+
+    .search-page-title {
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .search-page-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    /* Filter card */
+    .filter-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f3f4f6;
+        padding: 24px;
+        margin-bottom: 32px;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+    }
+
+    .filter-field label {
+        display: block;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    .filter-field input,
+    .filter-field select {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+        .filter-field input:focus,
+        .filter-field select:focus {
+            outline: none;
+            border-color: #1f2937;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(31, 41, 55, 0.08);
+        }
+
+        .filter-field input:hover,
+        .filter-field select:hover {
+            border-color: #9ca3af;
+            background: white;
+        }
+
+    .btn-search-submit {
+        width: 100%;
+        padding: 13px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 18px;
+    }
+
+        .btn-search-submit:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(31, 41, 55, 0.25);
+        }
+
+    /* Results */
+    .results-heading {
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 14px;
+    }
+
+    .result-card {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid #f3f4f6;
+        padding: 18px;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+        .result-card:hover {
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+    .result-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .result-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #1f2937;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+        .result-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .result-name {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 15px;
+    }
+
+    .result-role-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-top: 3px;
+        letter-spacing: 0.02em;
+    }
+
+        .result-role-badge.teach {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .result-role-badge.learn {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+    .result-topics {
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .result-actions {
+        margin-top: auto;
+        display: flex;
+    }
+
+    .btn-result-chat {
+        width: 100%;
+        padding: 9px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+
+        .btn-result-chat:hover {
+            background: #374151;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-result-hire {
+        width: 100%;
+        padding: 9px;
+        background: transparent;
+        color: #16a34a;
+        border: 1.5px solid #16a34a;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .btn-result-hire:hover {
+            background: #16a34a;
+            color: white;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 48px 20px;
+        color: #9ca3af;
+    }
+
+        .empty-state .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+    .hire-status-banner {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+        .hire-status-banner.success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #16a34a;
+        }
+
+        .hire-status-banner.error {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #dc2626;
+        }
+
+    @@media (max-width: 768px) {
+        .filter-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="search-page">
+    <h1 class="search-page-title">@Localizer["Caută profesori sau elevi"]</h1>
+    <p class="search-page-subtitle">@Localizer["Găsește partenerul potrivit pentru a învăța sau a preda"]</p>
+
+    @if (TempData["HireMessage"] != null)
+    {
+        <div class="hire-status-banner success">@TempData["HireMessage"]</div>
+    }
+    @if (TempData["HireError"] != null)
+    {
+        <div class="hire-status-banner error">@TempData["HireError"]</div>
+    }
+
+    <div class="filter-card">
+        <form method="get">
+            <div class="filter-grid">
+                <div class="filter-field">
+                    <label>@Localizer["Nume utilizator"]</label>
+                    <input type="text" name="userName" placeholder="@Localizer["Caută..."]" value="@Model.UserName" />
+                </div>
+                <div class="filter-field">
+                    <label>@Localizer["Rol"]</label>
+                    <select name="role">
+                        <option value="">@Localizer["Toate"]</option>
+                        <option value="Teach" selected="@(Model.Role == "Teach")">@Localizer["Predă"]</option>
+                        <option value="Learn" selected="@(Model.Role == "Learn")">@Localizer["Învață"]</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>@Localizer["Nivel de experiență"]</label>
+                    <select name="teachingLevel">
+                        <option value="">@Localizer["Toate"]</option>
+                        @foreach (var level in Model.TeachingLevels)
+                        {
+                            <option value="@level" selected="@(level == Model.TeachingLevel)">@level</option>
+                        }
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>@Localizer["Materie"]</label>
+                    <select name="selectedTopic">
+                        <option value="">@Localizer["Toate materiile"]</option>
+                        @foreach (var topic in Model.Topics)
+                        {
+                            <option value="@topic.Id" selected="@(Model.SelectedTopic == topic.Id.ToString())">@topic.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn-search-submit">@Localizer["Caută"]</button>
+        </form>
+    </div>
+
+    @if (Model.Results.Count > 0)
+    {
+        <h2 class="results-heading">@Localizer["Rezultate"] (@Model.Results.Count)</h2>
+        <div class="results-grid">
+            @foreach (var user in Model.Results)
+            {
+                var initial = !string.IsNullOrEmpty(user.UserName) ? user.UserName[0].ToString().ToUpper() : "?";
+                var roleLabel = user.Role == "Teach" ? Localizer["Predă"] : Localizer["Învață"];
+                <div class="result-card">
+                    <div class="result-top">
+                        <div class="result-avatar">
+                            @if (!string.IsNullOrEmpty(user.AvatarPath))
+                            {
+                                <img src="@user.AvatarPath" alt="" />
+                            }
+                            else
+                            {
+                                @initial
+                            }
+                        </div>
+                        <div>
+                            <div class="result-name">@user.UserName</div>
+                            @if (user.Role == "Teach")
+                            {
+                                <span class="result-role-badge teach">@Localizer["Predă"]</span>
+                            }
+                            else
+                            {
+                                <span class="result-role-badge learn">@Localizer["Învață"]</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="result-topics">
+                        <span>@roleLabel: @FormatTopics(user)</span>
+                    </div>
+
+                    <div class="result-actions">
+                        @if (Model.MatchedUserIds.Contains(user.Id))
+                        {
+                            <a href="/Chat/WithUser?userId=@user.Id" class="btn-result-chat">@Localizer["Chat"]</a>
+                        }
+                        else if (user.Role == "Teach" && Model.CurrentUserRole != "Teach" && user.Id != Model.CurrentUserId)
+                        {
+                            <form asp-action="SendHireRequest" asp-controller="Hire" method="post" style="width: 100%;">
+                                <input type="hidden" name="targetId" value="@user.Id" />
+                                <button type="submit" class="btn-result-hire">@Localizer["Trimite cerere"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <p>@Localizer["Niciun rezultat găsit. Încearcă alți termeni de căutare."]</p>
+        </div>
+    }
+</div>

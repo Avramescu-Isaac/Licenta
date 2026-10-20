@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Elevii tăi" xml:space="preserve">
+    <value>Your Students</value>
+  </data>
+  <data name="Profesorii tăi" xml:space="preserve">
+    <value>Your Tutors</value>
+  </data>
+  <data name="Elevii cu care ai o colaborare activă" xml:space="preserve">
+    <value>Students you have an active collaboration with</value>
+  </data>
+  <data name="Profesorii cu care ai o colaborare activă" xml:space="preserve">
+    <value>Tutors you have an active collaboration with</value>
+  </data>
+  <data name="Nu ai încă nicio colaborare." xml:space="preserve">
+    <value>You don't have any collaborations yet.</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+</root>

@@ -1,0 +1,464 @@
+﻿@page
+@model CourseHub.Areas.Identity.Pages.Account.Manage.IndexModel
+@{
+    ViewData["Title"] = Localizer["Profil"];
+    ViewData["ActivePage"] = ManageNavPages.Index;
+    var savingText = Localizer["Se salvează..."].Value;
+    var uploadingText = Localizer["Se încarcă..."].Value;
+}
+
+<style>
+    .profile-container {
+        max-width: 520px;
+        margin: 0 auto;
+        padding: 20px 0;
+    }
+
+    .profile-title {
+        color: #1f2937;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .profile-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+
+    /* ===== Avatar ===== */
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .profile-avatar {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: #1f2937;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+        position: relative;
+        border: 3px solid #e5e7eb;
+    }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .avatar-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .avatar-actions-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn-avatar {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-avatar-upload {
+        background: #1f2937;
+        color: white;
+    }
+
+        .btn-avatar-upload:hover {
+            background: #374151;
+        }
+
+    .btn-avatar-remove {
+        background: transparent;
+        color: #dc2626;
+        border: 1.5px solid #dc2626;
+    }
+
+        .btn-avatar-remove:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+    .avatar-hint {
+        color: #9ca3af;
+        font-size: 12px;
+    }
+
+    .avatar-file-input {
+        display: none;
+    }
+
+    .avatar-spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 0.8s ease-in-out infinite;
+        vertical-align: middle;
+    }
+
+    .form-group-modern {
+        margin-bottom: 20px;
+    }
+
+        .form-group-modern label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-group-modern .input-wrapper {
+            position: relative;
+        }
+
+        .form-group-modern input,
+        .form-group-modern textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+            .form-group-modern input:focus,
+            .form-group-modern textarea:focus {
+                outline: none;
+                border-color: #1f2937;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(31, 41, 55, 0.08);
+                transform: translateY(-1px);
+            }
+
+            .form-group-modern input:hover,
+            .form-group-modern textarea:hover {
+                border-color: #9ca3af;
+                background: white;
+            }
+
+            .form-group-modern input:disabled {
+                background: #f3f4f6;
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+
+        .form-group-modern .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 18px;
+        }
+
+        .form-group-modern input.with-icon {
+            padding-left: 44px;
+        }
+
+        .form-group-modern textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+    .field-validation-error {
+        color: #dc2626;
+        font-size: 13px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .validation-summary {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        color: #dc2626;
+    }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    .btn-primary {
+        width: 100%;
+        padding: 14px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+    }
+
+        .btn-primary:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(31, 41, 55, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .btn-danger {
+        width: 100%;
+        padding: 12px;
+        background: transparent;
+        color: #dc2626;
+        border: 2px solid #dc2626;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 12px;
+    }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.25);
+        }
+
+        .btn-danger:active {
+            transform: translateY(0);
+        }
+
+    .profile-divider {
+        border: none;
+        border-top: 2px solid #e5e7eb;
+        margin: 24px 0;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 0.8s ease-in-out infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .avatar-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <h1 class="profile-title">@ViewData["Title"]</h1>
+    <p class="profile-subtitle">@Localizer["Gestionează-ți informațiile de profil"]</p>
+
+    <partial name="_StatusMessage" for="StatusMessage" />
+
+    <!-- ===== Avatar upload/remove (separate form + handlers) ===== -->
+    <div class="avatar-section">
+        <div class="profile-avatar" id="avatarPreviewContainer">
+            @{
+                var initial = !string.IsNullOrEmpty(Model.Username) ? Model.Username[0].ToString().ToUpper() : "?";
+            }
+            @if (!string.IsNullOrEmpty(Model.AvatarPath))
+            {
+                <img src="@Model.AvatarPath" alt="@Localizer["Avatar"]" id="avatarPreviewImg" />
+            }
+            else
+            {
+                <span id="avatarPreviewInitial">@initial</span>
+            }
+        </div>
+
+        <form method="post" enctype="multipart/form-data" asp-page-handler="UploadAvatar" id="avatarForm">
+            <div class="avatar-actions">
+                <div class="avatar-actions-row">
+                    <label for="avatarFileInput" class="btn-avatar btn-avatar-upload" id="avatarUploadLabel">
+                        @Localizer["Schimbă avatarul"]
+                    </label>
+                    <input type="file" name="AvatarFile" id="avatarFileInput" class="avatar-file-input"
+                           accept="image/jpeg,image/png,image/webp,image/gif" onchange="onAvatarFileChosen(this)" />
+
+                    @if (!string.IsNullOrEmpty(Model.AvatarPath))
+                    {
+                        <button type="submit" asp-page-handler="RemoveAvatar" class="btn-avatar btn-avatar-remove" id="avatarRemoveBtn">
+                            @Localizer["Elimină"]
+                        </button>
+                    }
+                </div>
+                <span class="avatar-hint">@Localizer["JPG, PNG, WEBP sau GIF · max. 3 MB"]</span>
+            </div>
+        </form>
+    </div>
+
+    <hr class="profile-divider" />
+
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+
+        <div class="form-group-modern">
+            <label asp-for="Username">@Localizer["Nume de utilizator"]</label>
+            <div class="input-wrapper">
+                <input asp-for="Username" class="with-icon" disabled />
+            </div>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="Input.Bio">@Localizer["Bio"]</label>
+            <textarea asp-for="Input.Bio" placeholder="@Localizer["Povestește-ne puțin despre tine..."]"></textarea>
+            <span asp-validation-for="Input.Bio" class="field-validation-error"></span>
+            <div style="text-align: right; font-size: 12px; color: #9ca3af; margin-top: 4px;">
+                <span id="charCount">0</span>/500 @Localizer["caractere"]
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="saveBtn">
+            <span class="spinner" id="saveSpinner" style="display: none;"></span>
+            <span id="saveText">@Localizer["Salvează Profilul"]</span>
+        </button>
+    </form>
+
+    <hr class="profile-divider" />
+
+    <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+        <button type="submit" class="btn-danger">@Localizer["Deconectare"]</button>
+    </form>
+</div>
+
+@* Clear status message after displaying it *@
+@{
+    if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+        Model.StatusMessage = null;
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const savingText = @Html.Raw(Json.Serialize(savingText));
+        const uploadingText = @Html.Raw(Json.Serialize(uploadingText));
+
+        const bioTextarea = document.getElementById('Input_Bio');
+        const charCount = document.getElementById('charCount');
+
+        if (bioTextarea && charCount) {
+            bioTextarea.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+            });
+            charCount.textContent = bioTextarea.value.length;
+        }
+
+        document.querySelector('form:not([asp-page="/Account/Logout"]):not(#avatarForm)')?.addEventListener('submit', function() {
+            const btn = document.getElementById('saveBtn');
+            const spinner = document.getElementById('saveSpinner');
+            const text = document.getElementById('saveText');
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            text.textContent = savingText;
+            btn.style.opacity = '0.7';
+        });
+
+        document.querySelectorAll('.form-group-modern input, .form-group-modern textarea').forEach(input => {
+            input.addEventListener('focus', function() {
+                const label = this.closest('.form-group-modern')?.querySelector('label');
+                if (label) label.style.color = '#1f2937';
+            });
+            input.addEventListener('blur', function() {
+                const label = this.closest('.form-group-modern')?.querySelector('label');
+                if (label) label.style.color = '#374151';
+            });
+        });
+
+        // Auto-submit the avatar form as soon as a file is chosen, with a quick local preview.
+        //
+        // NOTE: this deliberately uses URL.createObjectURL() rather than
+        // FileReader.readAsDataURL(). readAsDataURL base64-encodes the whole image into a
+        // string (a 372 KB JPEG becomes a ~500 KB string injected into the DOM) right before
+        // the page navigates away. createObjectURL just hands back a short blob: reference
+        // instead - same visual result, a fraction of the memory, and it's synchronous, so
+        // there's no async callback racing against the form submit.
+        function onAvatarFileChosen(input) {
+            if (!input.files || !input.files[0]) return;
+
+            const file = input.files[0];
+            const container = document.getElementById('avatarPreviewContainer');
+
+            if (container) {
+                const objectUrl = URL.createObjectURL(file);
+                container.innerHTML = '';
+
+                const img = document.createElement('img');
+                img.alt = '';
+                // Release the blob reference once the browser has decoded the image.
+                img.onload = function () { URL.revokeObjectURL(objectUrl); };
+                img.src = objectUrl;
+
+                container.appendChild(img);
+            }
+
+            const label = document.getElementById('avatarUploadLabel');
+            if (label) {
+                label.innerHTML = '';
+                const spinner = document.createElement('span');
+                spinner.className = 'avatar-spinner';
+                label.appendChild(spinner);
+                label.appendChild(document.createTextNode(' ' + uploadingText));
+            }
+
+            document.getElementById('avatarForm').submit();
+        }
+    </script>
+}

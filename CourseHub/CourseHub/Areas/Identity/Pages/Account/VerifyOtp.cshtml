@@ -1,0 +1,375 @@
+﻿@page
+@model CourseHub.Areas.Identity.Pages.Account.VerifyOtpModel
+@{
+    ViewData["Title"] = Localizer["Verifică-ți Emailul"];
+    var i18n = new
+    {
+        expired = Localizer["Expirat!"].Value,
+        enterAllDigits = Localizer["Te rugăm să introduci toate cele 6 cifre."].Value,
+        verifying = Localizer["Se verifică..."].Value
+    };
+}
+
+<style>
+    .verify-container {
+        max-width: 440px;
+        margin: 60px auto;
+        padding: 48px 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .verify-icon {
+        font-size: 64px;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .verify-title {
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .verify-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 32px;
+        line-height: 1.6;
+    }
+
+    .otp-input-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 24px 0;
+    }
+
+        .otp-input-container input {
+            width: 52px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            caret-color: #1f2937;
+        }
+
+            .otp-input-container input:focus {
+                outline: none;
+                border-color: #1f2937;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(31, 41, 55, 0.08);
+                transform: translateY(-2px);
+            }
+
+            .otp-input-container input:hover {
+                border-color: #9ca3af;
+                background: white;
+            }
+
+            .otp-input-container input:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+    .form-group-hidden {
+        display: none;
+    }
+
+    .btn-verify {
+        width: 100%;
+        padding: 14px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+    }
+
+        .btn-verify:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(31, 41, 55, 0.25);
+        }
+
+        .btn-verify:active {
+            transform: translateY(0);
+        }
+
+        .btn-verify:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .validation-summary {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        color: #dc2626;
+        text-align: left;
+        font-size: 14px;
+    }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    .field-validation-error {
+        color: #dc2626;
+        font-size: 13px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .resend-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+        .resend-section p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .resend-section a {
+            color: #1f2937;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+            .resend-section a:hover {
+                background: #f3f4f6;
+                text-decoration: underline;
+            }
+
+    /* Timer */
+    .timer {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+        .timer span {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+    /* Spinner for loading */
+    .spinner {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 0.8s ease-in-out infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .verify-container {
+            padding: 32px 24px;
+            margin: 20px 16px;
+        }
+
+        .otp-input-container input {
+            width: 44px;
+            height: 52px;
+            font-size: 20px;
+        }
+    }
+</style>
+
+<div class="verify-container">
+    <h1 class="verify-title">@Localizer["Verifică-ți Emailul"]</h1>
+    <p class="verify-subtitle">
+        @Localizer["Am trimis un cod de verificare din 6 cifre pe emailul tău."]<br />
+        @Localizer["Introdu-l mai jos pentru a-ți verifica contul."]
+    </p>
+
+    <div asp-validation-summary="All" class="validation-summary"></div>
+
+    <form method="post" id="verifyForm">
+        <div class="otp-input-container" id="otpContainer">
+            <input type="text" id="digit1" maxlength="1" inputmode="numeric" pattern="[0-9]" autofocus />
+            <input type="text" id="digit2" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+            <input type="text" id="digit3" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+            <span style="font-size: 28px; color: #9ca3af; align-self: center;">—</span>
+            <input type="text" id="digit4" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+            <input type="text" id="digit5" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+            <input type="text" id="digit6" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+        </div>
+
+        <input asp-for="Input.Code" id="hiddenCode" class="form-group-hidden" />
+        <input type="hidden" asp-for="UserId" />
+
+        <span asp-validation-for="Input.Code" class="field-validation-error" id="codeError"></span>
+
+        <button type="submit" class="btn-verify" id="verifyBtn">
+            <span class="spinner" id="verifySpinner" style="display: none;"></span>
+            <span id="verifyText">@Localizer["Verifică Emailul"]</span>
+        </button>
+
+        <div class="resend-section">
+            <div class="timer" id="timerDisplay">
+                @Localizer["Codul expiră în:"] <span id="countdown">10:00</span>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const i18n = @Html.Raw(Json.Serialize(i18n));
+
+        // OTP input auto-advance
+        const inputs = document.querySelectorAll('#otpContainer input');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', function(e) {
+                // Only allow numbers
+                this.value = this.value.replace(/[^0-9]/g, '');
+
+                // Move to next input
+                if (this.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+
+                // Update hidden field
+                updateHiddenCode();
+            });
+
+            input.addEventListener('keydown', function(e) {
+                // Backspace to previous
+                if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                    inputs[index - 1].focus();
+                }
+
+                // Left arrow
+                if (e.key === 'ArrowLeft' && index > 0) {
+                    inputs[index - 1].focus();
+                }
+
+                // Right arrow
+                if (e.key === 'ArrowRight' && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            // Paste support
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text');
+                const digits = paste.replace(/[^0-9]/g, '').slice(0, 6);
+
+                digits.split('').forEach((digit, i) => {
+                    if (i < inputs.length) {
+                        inputs[i].value = digit;
+                    }
+                });
+
+                // Focus last filled or next empty
+                const lastFilled = Math.min(digits.length, inputs.length) - 1;
+                if (lastFilled < inputs.length - 1) {
+                    inputs[lastFilled + 1].focus();
+                } else {
+                    inputs[lastFilled].focus();
+                }
+
+                updateHiddenCode();
+            });
+        });
+
+        function updateHiddenCode() {
+            let code = '';
+            inputs.forEach(input => {
+                code += input.value;
+            });
+            document.getElementById('hiddenCode').value = code;
+
+            // Auto-submit when all 6 digits are entered
+            if (code.length === 6) {
+                document.getElementById('verifyBtn').click();
+            }
+        }
+
+        // Timer countdown (10 minutes)
+        let timeLeft = 600; // 10 minutes in seconds
+        const countdownEl = document.getElementById('countdown');
+        const timerDisplay = document.getElementById('timerDisplay');
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                countdownEl.textContent = i18n.expired;
+                timerDisplay.style.color = '#dc2626';
+                // Disable inputs
+                inputs.forEach(input => input.disabled = true);
+                document.getElementById('verifyBtn').disabled = true;
+                document.getElementById('verifyBtn').style.opacity = '0.5';
+            }
+        }
+
+        // Start timer
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimer();
+            if (timeLeft <= 0) clearInterval(timerInterval);
+        }, 1000);
+
+        updateTimer();
+
+        // Form submit handling
+        document.getElementById('verifyForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('verifyBtn');
+            const spinner = document.getElementById('verifySpinner');
+            const text = document.getElementById('verifyText');
+
+            // Check if all digits are filled
+            let code = '';
+            inputs.forEach(input => { code += input.value; });
+
+            if (code.length < 6) {
+                e.preventDefault();
+                document.getElementById('codeError').textContent = i18n.enterAllDigits;
+                return;
+            }
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            text.textContent = i18n.verifying;
+            btn.style.opacity = '0.7';
+        });
+    </script>
+}

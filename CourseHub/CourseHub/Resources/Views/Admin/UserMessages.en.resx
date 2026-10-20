@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Mesajele lui {0}" xml:space="preserve">
+    <value>{0}'s Messages</value>
+  </data>
+  <data name="Înapoi la utilizatori" xml:space="preserve">
+    <value>Back to users</value>
+  </data>
+  <data name="Toate mesajele trimise de acest cont, în scop de moderare." xml:space="preserve">
+    <value>All messages sent by this account, for moderation purposes.</value>
+  </data>
+  <data name="Acest utilizator nu a trimis niciun mesaj." xml:space="preserve">
+    <value>This user hasn't sent any messages.</value>
+  </data>
+  <data name="Citit" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="Necitit" xml:space="preserve">
+    <value>Unread</value>
+  </data>
+</root>

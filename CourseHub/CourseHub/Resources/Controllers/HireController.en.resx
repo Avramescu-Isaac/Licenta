@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Nu s-a putut trimite cererea." xml:space="preserve">
+    <value>The request could not be sent.</value>
+  </data>
+  <data name="Ai trimis deja o cerere acestui profesor." xml:space="preserve">
+    <value>You've already sent a request to this teacher.</value>
+  </data>
+  <data name="Cerere trimisă!" xml:space="preserve">
+    <value>Request sent!</value>
+  </data>
+  <data name="Cererea a fost acceptată." xml:space="preserve">
+    <value>The request was accepted.</value>
+  </data>
+  <data name="Cererea a fost respinsă." xml:space="preserve">
+    <value>The request was rejected.</value>
+  </data>
+  <data name="Cererea a fost anulată." xml:space="preserve">
+    <value>The request was canceled.</value>
+  </data>
+</root>

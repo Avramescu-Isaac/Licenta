@@ -1,0 +1,410 @@
+﻿﻿@{
+    // An account that has not finished the profile wizard is locked to it: the server-side
+    // check in ProfileCompletionMiddleware turns every other address back, and the navbar is
+    // stripped to match, so the interface never offers a way out that the server would refuse.
+    var lockedToWizard = (User.Identity?.IsAuthenticated ?? false)
+                         && !(User.IsInRole("Teach") || User.IsInRole("Learn"));
+
+}
+<!DOCTYPE html>
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CourseHub</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+            /* ====== NAVBAR STYLES ====== */
+            .navbar-custom {
+                background: #1f2937;
+                padding: 10px 0;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            }
+
+                .navbar-custom .navbar-brand {
+                    color: white;
+                    font-weight: 700;
+                    font-size: 22px;
+                    transition: all 0.3s ease;
+                }
+
+                    .navbar-custom .navbar-brand:hover {
+                        color: #60a5fa;
+                        transform: scale(1.02);
+                    }
+
+                .navbar-custom .nav-link {
+                    color: rgba(255, 255, 255, 0.7);
+                    font-weight: 500;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    transition: all 0.3s ease;
+                    font-size: 15px;
+                }
+
+                    .navbar-custom .nav-link:hover {
+                        color: white;
+                        background: rgba(255, 255, 255, 0.08);
+                    }
+
+                    .navbar-custom .nav-link.active {
+                        color: #60a5fa !important;
+                        background: rgba(96, 165, 250, 0.12);
+                    }
+
+                        .navbar-custom .nav-link.active::after {
+                            content: '';
+                            display: block;
+                            width: 100%;
+                            height: 2px;
+                            background: #60a5fa;
+                            border-radius: 2px;
+                            margin-top: 2px;
+                        }
+
+                .navbar-custom .btn-logout {
+                    color: rgba(255, 255, 255, 0.7);
+                    border: 1px solid rgba(255, 255, 255, 0.15);
+                    border-radius: 8px;
+                    padding: 6px 16px;
+                    transition: all 0.3s ease;
+                    background: transparent;
+                    font-weight: 500;
+                }
+
+                    .navbar-custom .btn-logout:hover {
+                        color: white;
+                        background: rgba(220, 38, 38, 0.15);
+                        border-color: rgba(220, 38, 38, 0.3);
+                    }
+
+                .navbar-custom .btn-signup {
+                    background: white;
+                    color: #1f2937;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 6px 20px;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                }
+
+                    .navbar-custom .btn-signup:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+                        color: #1f2937;
+                    }
+
+                .navbar-custom .btn-login {
+                    color: rgba(255, 255, 255, 0.7);
+                    padding: 6px 16px;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                }
+
+                    .navbar-custom .btn-login:hover {
+                        color: white;
+                    }
+
+            /* ====== LANGUAGE SWITCHER ====== */
+            .lang-switcher {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                padding: 6px 10px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+                .lang-switcher .lang-option {
+                    color: rgba(255, 255, 255, 0.55);
+                    text-decoration: none;
+                    padding: 2px 4px;
+                    border-radius: 4px;
+                    transition: all 0.2s ease;
+                }
+
+                    .lang-switcher .lang-option:hover {
+                        color: white;
+                    }
+
+                    .lang-switcher .lang-option.active {
+                        color: #60a5fa;
+                    }
+
+                .lang-switcher .lang-sep {
+                    color: rgba(255, 255, 255, 0.3);
+                }
+
+            .navbar-custom .nav-emoji {
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .navbar-custom .nav-label {
+                margin-left: 6px;
+            }
+
+            .navbar-custom .navbar-collapse {
+                flex-wrap: nowrap;
+            }
+
+            /* Narrow viewports: the buttons stay in the bar, reduced to their emoji. */
+            @@media (max-width: 991px) {
+                .navbar-custom {
+                    padding: 6px 0;
+                }
+
+                .navbar-custom .navbar-brand {
+                    font-size: 18px;
+                }
+
+                .navbar-custom .nav-label {
+                    display: none;
+                }
+
+                .navbar-custom .nav-link {
+                    padding: 8px 10px;
+                }
+
+                .navbar-custom .btn-logout,
+                .navbar-custom .btn-login,
+                .navbar-custom .btn-signup {
+                    padding: 6px 10px;
+                    font-size: 13px;
+                }
+            }
+
+            @@media (max-width: 575px) {
+                .navbar-custom .navbar-brand {
+                    font-size: 16px;
+                }
+
+                .navbar-custom .nav-link {
+                    padding: 8px 6px;
+                }
+            }
+
+            /* Mobile menu */
+            @@media (max-width: 991px) {
+                .navbar-custom .nav-link.active::after {
+                    display: none;
+                }
+
+                .lang-switcher {
+                    padding: 6px 8px;
+                }
+            }
+
+            /* ====== FOOTER STYLES ====== */
+            .footer-custom {
+                background: #f9fafb;
+                border-top: 1px solid #e5e7eb;
+                margin-top: 40px;
+            }
+
+                .footer-custom a {
+                    color: #6b7280;
+                    text-decoration: none;
+                    transition: all 0.3s ease;
+                }
+
+                    .footer-custom a:hover {
+                        color: #1f2937;
+                        text-decoration: underline;
+                    }
+
+            /* ====== STATUS MESSAGE ====== */
+            .status-message {
+                padding: 12px 16px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                border: none;
+                animation: slideDown 0.3s ease;
+            }
+
+                .status-message.success {
+                    background: #f0fdf4;
+                    border-left: 4px solid #16a34a;
+                    color: #16a34a;
+                }
+
+                .status-message.error {
+                    background: #fef2f2;
+                    border-left: 4px solid #dc2626;
+                    color: #dc2626;
+                }
+
+            .status-message-content {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .status-icon {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+
+            .status-text {
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            @@keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* ====== GENERAL ====== */
+            .main-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px 16px 0;
+                min-height: 60vh;
+            }
+
+            @@media (min-width: 768px) {
+                .main-content {
+                    padding: 24px 24px 0;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <!-- ====== NAVBAR ====== -->
+    <nav class="navbar navbar-expand navbar-custom">
+        <div class="container-fluid px-3 px-md-4">
+            @if (lockedToWizard)
+            {
+                @* Deliberately not a link: while the wizard is unfinished there is nowhere
+                   else to go, so the brand stays as plain text rather than offering a
+                   destination the server would only redirect back. *@
+                <span class="navbar-brand">📚 CourseHub</span>
+            }
+            else
+            {
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    📚 CourseHub
+                </a>
+            }
+            <div class="navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    @if (!lockedToWizard)
+                    {
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Search" ? "active" : "")"
+                           asp-area="" asp-controller="Search" asp-action="Index" title="@Localizer["Caută"]">
+                            <span class="nav-emoji">🔍</span><span class="nav-label">@Localizer["Caută"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Connections" ? "active" : "")"
+                           asp-area="" asp-controller="Connections" asp-action="Index" title="@Localizer["Colaborări"]">
+                            <span class="nav-emoji">🤝</span><span class="nav-label">@Localizer["Colaborări"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Hire" ? "active" : "")"
+                           asp-area="" asp-controller="Hire" asp-action="Requests" title="@Localizer["Cereri trimise"]">
+                            <span class="nav-emoji">📩</span><span class="nav-label">@Localizer["Cereri trimise"]</span>
+                        </a>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")"
+                               asp-area="" asp-controller="Admin" asp-action="Index" title="@Localizer["Admin"]">
+                                <span class="nav-emoji">🛠️</span><span class="nav-label">@Localizer["Admin"]</span>
+                            </a>
+                        </li>
+                    }
+                    }
+                </ul>
+
+                <!-- Right side -->
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    @if (lockedToWizard)
+                    {
+                        @* Only the language switcher below stays available. *@
+                    }
+                    else if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link nav-profile" asp-area="Identity" asp-page="/Account/Manage/Index" title="@User.Identity.Name">
+                                <span class="nav-emoji">👤</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post">
+                                <button type="submit" class="btn btn-logout">
+                                    @Localizer["Deconectare"]
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="btn btn-login" asp-area="Identity" asp-page="/Account/Login">@Localizer["Autentificare"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-signup" asp-area="Identity" asp-page="/Account/Register">
+                                @Localizer["Înregistrare"]
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <partial name="_LanguageSwitcher" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ====== MAIN CONTENT ====== -->
+    <div class="main-content">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="footer-custom">
+        <div class="container-fluid px-3 px-md-4" style="max-width: 1200px;">
+            <div class="row py-4 align-items-center">
+                <div class="col-md-4 text-center text-md-start">
+                    <h5 class="fw-bold" style="color: #1f2937; font-size: 18px;">📚 CourseHub</h5>
+                    <p style="color: #6b7280; font-size: 14px; margin: 0;">@Localizer["Înveți orice, predai orice."]</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" style="color: #6b7280; text-decoration: none; font-size: 14px;">
+                        @Localizer["Politica de confidențialitate"]
+                    </a>
+                    <span style="color: #d1d5db; margin: 0 12px;">|</span>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" style="color: #6b7280; text-decoration: none; font-size: 14px;">
+                        @Localizer["Acasă"]
+                    </a>
+                </div>
+                <div class="col-md-4 text-center text-md-end" style="color: #6b7280; font-size: 14px;">
+                    &copy; @DateTime.Now.Year CourseHub
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

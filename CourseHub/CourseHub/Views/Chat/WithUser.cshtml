@@ -1,0 +1,575 @@
+﻿@model List<CourseHub.Models.Message>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<CourseHub.Models.ApplicationUser> UserManager
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+@{
+    // Antiforgery tokens are validated globally for every POST (see Program.cs). The two
+    // fetch() calls below aren't <form> submits, so they send the token in a header.
+    var antiforgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    var currentUserId = UserManager.GetUserId(User);
+    var targetUser = ViewBag.TargetUser as CourseHub.Models.ApplicationUser;
+    var canSendFiles = ViewBag.CanSendFiles as bool? ?? false;
+    ViewData["Title"] = targetUser?.UserName ?? Localizer["Chat"].Value;
+    var youLabel = Localizer["Tu"].Value;
+    var youInitial = youLabel.Length > 0 ? youLabel.Substring(0, 1).ToUpper() : "?";
+    var targetInitial = !string.IsNullOrEmpty(targetUser?.UserName) ? targetUser.UserName[0].ToString().ToUpper() : "?";
+
+    var imageExtensions = new[] { ".png", ".jpg", ".jpeg", ".gif", ".webp" };
+
+    bool IsImage(string? path) =>
+        !string.IsNullOrEmpty(path) && imageExtensions.Contains(System.IO.Path.GetExtension(path).ToLowerInvariant());
+
+    string FileIcon(string? path)
+    {
+        var ext = System.IO.Path.GetExtension(path ?? "").ToLowerInvariant();
+        return ext switch
+        {
+            ".pdf" => "PDF",
+            ".doc" or ".docx" => "DOC",
+            ".ppt" or ".pptx" => "PPT",
+            ".xls" or ".xlsx" => "XLS",
+            ".zip" => "ZIP",
+            ".txt" => "TXT",
+            _ => "FILE"
+        };
+    }
+
+    string FormatFileSize(long? bytes)
+    {
+        if (bytes == null) return "";
+        double kb = bytes.Value / 1024.0;
+        if (kb < 1024) return $"{kb:0.#} KB";
+        return $"{(kb / 1024):0.#} MB";
+    }
+}
+
+<style>
+    .chat-page {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 20px 0 0;
+    }
+
+    .chat-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f3f4f6;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 220px);
+        min-height: 420px;
+    }
+
+    /* Header */
+    .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        background: #1f2937;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .chat-header-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+        .chat-header-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .chat-header-name {
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .chat-back-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 14px;
+        margin-left: auto;
+        transition: color 0.2s ease;
+    }
+
+        .chat-back-link:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Message window */
+    .chat-window {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px;
+        background: #f9fafb;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .chat-empty {
+        margin: auto;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 14px;
+    }
+
+        .chat-empty .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+    .chat-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        max-width: 78%;
+    }
+
+        .chat-row.mine {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-row.theirs {
+            align-self: flex-start;
+        }
+
+    .chat-row-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #1f2937;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+        margin-bottom: 2px;
+    }
+
+        .chat-row-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .chat-bubble {
+        padding: 10px 14px;
+        border-radius: 16px;
+        font-size: 14px;
+        line-height: 1.45;
+        word-break: break-word;
+        margin: 3px 0;
+    }
+
+        .chat-row.mine .chat-bubble {
+            background: #1f2937;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-row.theirs .chat-bubble {
+            background: white;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+    /* File / image attachments */
+    .chat-image-attachment {
+        display: block;
+        max-width: 220px;
+        max-height: 220px;
+        border-radius: 14px;
+        margin: 3px 0;
+        cursor: pointer;
+        border: 1px solid #e5e7eb;
+    }
+
+    .chat-file-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 14px;
+        margin: 3px 0;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        max-width: 240px;
+    }
+
+    .chat-row.mine .chat-file-card {
+        background: #1f2937;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .chat-row.theirs .chat-file-card {
+        background: white;
+        color: #1f2937;
+        border: 1px solid #e5e7eb;
+        border-bottom-left-radius: 4px;
+    }
+
+    .chat-file-card:hover {
+        opacity: 0.85;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .chat-file-icon {
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    .chat-file-info {
+        min-width: 0;
+    }
+
+    .chat-file-name {
+        font-size: 13px;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .chat-file-size {
+        font-size: 11px;
+        opacity: 0.7;
+    }
+
+    /* Input area */
+    .chat-input-bar {
+        display: flex;
+        gap: 10px;
+        padding: 14px 16px;
+        background: white;
+        border-top: 1px solid #f3f4f6;
+        flex-shrink: 0;
+        align-items: flex-end;
+    }
+
+    .chat-input {
+        flex: 1;
+        resize: none;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-family: inherit;
+        max-height: 100px;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #1f2937;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(31, 41, 55, 0.08);
+        }
+
+    .btn-chat-send,
+    .btn-chat-attach {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        color: white;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-chat-send {
+        background: #1f2937;
+    }
+
+        .btn-chat-send:hover {
+            background: #374151;
+            transform: translateY(-1px);
+        }
+
+        .btn-chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .btn-chat-attach {
+        background: #6b7280;
+    }
+
+        .btn-chat-attach:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .btn-chat-attach.uploading {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+    #chatFileInput {
+        display: none;
+    }
+
+    @@media (max-width: 640px) {
+        .chat-page {
+            padding: 12px 0 0;
+        }
+
+        .chat-card {
+            height: calc(100vh - 180px);
+            border-radius: 12px;
+        }
+
+        .chat-row {
+            max-width: 88%;
+        }
+    }
+</style>
+
+<div class="chat-page">
+    <div class="chat-card">
+        <div class="chat-header">
+            <div class="chat-header-avatar">
+                @if (!string.IsNullOrEmpty(targetUser?.AvatarPath))
+                {
+                    <img src="@targetUser.AvatarPath" alt="" />
+                }
+                else
+                {
+                    @targetInitial
+                }
+            </div>
+            <div class="chat-header-name">@targetUser?.UserName</div>
+            <a href="/Connections" class="chat-back-link">@Localizer["Colaborări"]</a>
+        </div>
+
+        <div id="chatWindow" class="chat-window">
+            @if (Model.Count == 0)
+            {
+                <div class="chat-empty">
+                    @Localizer["Nicio conversație încă. Spune-i bună!"]
+                </div>
+            }
+            else
+            {
+                foreach (var msg in Model)
+                {
+                    var isMine = msg.SenderId == currentUserId;
+                    <div class="chat-row @(isMine ? "mine" : "theirs")">
+                        <div class="chat-row-avatar">
+                            @if (isMine)
+                            {
+                                @youInitial
+                            }
+                            else if (!string.IsNullOrEmpty(targetUser?.AvatarPath))
+                            {
+                                <img src="@targetUser.AvatarPath" alt="" />
+                            }
+                            else
+                            {
+                                @targetInitial
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(msg.FilePath) && IsImage(msg.FilePath))
+                        {
+                            <a href="@msg.FilePath" target="_blank" rel="noopener">
+                                <img src="@msg.FilePath" alt="@msg.FileName" class="chat-image-attachment" />
+                            </a>
+                        }
+                        else if (!string.IsNullOrEmpty(msg.FilePath))
+                        {
+                            <a href="@msg.FilePath" download="@msg.FileName" class="chat-file-card">
+                                <span class="chat-file-icon">@FileIcon(msg.FilePath)</span>
+                                <span class="chat-file-info">
+                                    <span class="chat-file-name">@msg.FileName</span><br />
+                                    <span class="chat-file-size">@FormatFileSize(msg.FileSize)</span>
+                                </span>
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="chat-bubble">@msg.Content</div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="chat-input-bar">
+            <input type="hidden" id="receiverId" value="@targetUser?.Id" />
+            @if (canSendFiles)
+            {
+                <input type="file" id="chatFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.png,.jpg,.jpeg,.gif,.webp" />
+                <button type="button" id="attachButton" class="btn-chat-attach" title="@Localizer["Trimite un fișier"]">+</button>
+            }
+            <textarea id="messageInput" class="chat-input" rows="1" placeholder="@Localizer["Scrie un mesaj..."]"></textarea>
+            <button id="sendButton" class="btn-chat-send" title="@Localizer["Trimite"]">&rarr;</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Served from wwwroot, not from a CDN: real-time chat is the one feature that breaks
+       silently without internet access, and the page gives no error when the library fails
+       to load. Same official build as before (microsoft-signalr 7.0.5). *@
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
+        const senderId = "@currentUserId";
+        const receiverId = document.getElementById("receiverId").value;
+        const antiforgeryToken = "@antiforgeryToken";
+        const youInitial = @Html.Raw(Json.Serialize(youInitial));
+
+        const chatWindow = document.getElementById("chatWindow");
+
+        function scrollToBottom() {
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+        scrollToBottom();
+
+        function appendBubble(isMine, text) {
+            // Clear the empty-state placeholder on the first message, if present.
+            const emptyState = chatWindow.querySelector('.chat-empty');
+            if (emptyState) emptyState.remove();
+
+            const row = document.createElement("div");
+            row.className = "chat-row " + (isMine ? "mine" : "theirs");
+
+            const avatar = document.createElement("div");
+            avatar.className = "chat-row-avatar";
+            avatar.textContent = isMine ? youInitial : "@targetInitial";
+
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble";
+            bubble.textContent = text;
+
+            row.appendChild(avatar);
+            row.appendChild(bubble);
+            chatWindow.appendChild(row);
+            scrollToBottom();
+        }
+
+        connection.on("ReceiveMessage", function (fromUser, message) {
+            appendBubble(false, message);
+        });
+
+        connection.start();
+
+        function sendCurrentMessage() {
+            const input = document.getElementById("messageInput");
+            const message = input.value.trim();
+            if (!message) return;
+
+            connection.invoke("SendMessage", senderId, receiverId, message);
+
+            fetch("/api/messages", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': antiforgeryToken
+                },
+                body: JSON.stringify({ senderId, receiverId, content: message })
+            });
+
+            appendBubble(true, message);
+            input.value = "";
+            input.style.height = "auto";
+        }
+
+        document.getElementById("sendButton").addEventListener("click", sendCurrentMessage);
+
+        const messageInput = document.getElementById("messageInput");
+        messageInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendCurrentMessage();
+            }
+        });
+
+        // Auto-grow the textarea up to a max height (handled via CSS max-height).
+        messageInput.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = this.scrollHeight + "px";
+        });
+
+        // ===== File attachment (teachers only - the button/input only render server-side
+        // when the logged-in user's Role is "Teach"; the upload endpoint enforces this too). =====
+        const attachButton = document.getElementById("attachButton");
+        const chatFileInput = document.getElementById("chatFileInput");
+
+        if (attachButton && chatFileInput) {
+            attachButton.addEventListener("click", function () {
+                chatFileInput.click();
+            });
+
+            chatFileInput.addEventListener("change", async function () {
+                const file = chatFileInput.files[0];
+                if (!file) return;
+
+                attachButton.classList.add("uploading");
+                attachButton.disabled = true;
+
+                const formData = new FormData();
+                formData.append("receiverId", receiverId);
+                formData.append("file", file);
+
+                try {
+                    const response = await fetch("/api/messages/upload-file", {
+                        method: "POST",
+                        headers: { 'RequestVerificationToken': antiforgeryToken },
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        // Simplest reliable way to show the new attachment with correct
+                        // icon/thumbnail/download-link markup is to re-render from the server.
+                        window.location.reload();
+                    } else {
+                        const text = await response.text();
+                        alert(text || "Upload failed.");
+                        attachButton.classList.remove("uploading");
+                        attachButton.disabled = false;
+                    }
+                } catch (err) {
+                    alert("Upload failed.");
+                    attachButton.classList.remove("uploading");
+                    attachButton.disabled = false;
+                }
+
+                chatFileInput.value = "";
+            });
+        }
+    </script>
+}

@@ -1,0 +1,463 @@
+﻿@page
+@model CourseHub.Areas.Identity.Pages.Account.ProfileWizardModel
+@{
+    ViewData["Title"] = Localizer["Completează-ți Profilul"];
+    var alertMaxTopics = Localizer["Poți selecta maximum 3 materii!"].Value;
+}
+
+<style>
+    /* Topic Card Styles */
+    .topic-card {
+        display: inline-block;
+        padding: 15px 25px;
+        margin: 8px;
+        background: #f0f2f5;
+        border: 2px solid #d1d5db;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 16px;
+        font-weight: 500;
+        color: #374151;
+        user-select: none;
+        position: relative;
+        min-width: 100px;
+        text-align: center;
+    }
+
+        /* Hover effect: smaller area + darker background */
+        .topic-card:hover {
+            transform: scale(0.92);
+            background: #6b7280;
+            color: white;
+            border-color: #4b5563;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Clicked/Selected state - stays with the hover style */
+        .topic-card.selected {
+            transform: scale(0.92);
+            background: #1f2937;
+            color: white;
+            border-color: #111827;
+            box-shadow: 0 4px 16px rgba(31, 41, 55, 0.3);
+        }
+
+            /* Hover on selected keeps the same style but with a subtle glow */
+            .topic-card.selected:hover {
+                background: #374151;
+                box-shadow: 0 4px 20px rgba(31, 41, 55, 0.4);
+            }
+
+        /* Hide the actual checkbox */
+        .topic-card input[type="checkbox"] {
+            display: none;
+        }
+
+    /* Topic grid layout */
+    .topics-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 20px;
+        justify-content: center;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+        /* Maximum topics reached indicator */
+        .topics-grid.max-selected .topic-card:not(.selected):hover {
+            transform: scale(0.95);
+            background: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+    /* Selection counter badge */
+    .selection-counter {
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+        .selection-counter .count {
+            font-weight: bold;
+            color: #1f2937;
+            font-size: 18px;
+        }
+
+    /* Step container styling */
+    .step-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .step-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #1f2937;
+    }
+
+    .step-subtitle {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 20px;
+    }
+
+    /* Navigation buttons */
+    .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn {
+        padding: 10px 30px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-primary {
+        background: #1f2937;
+        border: none;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 41, 55, 0.3);
+        }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        border: 1px solid #d1d5db;
+        color: #374151;
+    }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+    .btn-success {
+        background: #059669;
+        border: none;
+        color: white;
+    }
+
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+    /* Validation styling */
+    .field-validation-error {
+        color: #dc2626;
+        font-size: 14px;
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .text-danger {
+        color: #dc2626;
+    }
+</style>
+
+<div class="step-container">
+    <h2 class="step-title">@ViewData["Title"]</h2>
+
+    <form method="post">
+        <input type="hidden" name="CurrentStep" value="@Model.CurrentStep" />
+        <input type="hidden" name="wizardAction" id="wizardAction" />
+
+        @* Plain markup on purpose: the per-field <span asp-validation-for>elements carry
+           data-valmsg-replace, so jquery.validate.unobtrusive blanks them as soon as it
+           parses the form, and the server-side messages never reach the user. This block
+           has no data-val attributes, so it survives. *@
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="field-validation-error">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        <!-- STEP 1: Role Selection -->
+        @if (Model.CurrentStep == 1)
+        {
+            <div>
+                <h3 class="step-subtitle">@Localizer["Pasul 1: Alege-ți Rolul"]</h3>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <input type="radio" id="roleLearn" asp-for="Wizard.Role" value="Learn" style="display: none;" />
+                        <label for="roleLearn" style="display: inline-block; padding: 20px 40px; background: #f0f2f5; border: 2px solid #d1d5db; border-radius: 12px; cursor: pointer; font-size: 18px; transition: all 0.3s;">
+                            @Localizer["Vreau să Învăț"]
+                        </label>
+                    </div>
+                    <div style="text-align: center;">
+                        <input type="radio" id="roleTeach" asp-for="Wizard.Role" value="Teach" style="display: none;" />
+                        <label for="roleTeach" style="display: inline-block; padding: 20px 40px; background: #f0f2f5; border: 2px solid #d1d5db; border-radius: 12px; cursor: pointer; font-size: 18px; transition: all 0.3s;">
+                            @Localizer["Vreau să Predau"]
+                        </label>
+                    </div>
+                </div>
+                <span asp-validation-for="Wizard.Role" class="field-validation-error"></span>
+                <div class="nav-buttons">
+                    <span></span>
+                    <button type="submit" class="btn btn-primary" onclick="setAction('next')">@Localizer["Următorul"]</button>
+                </div>
+            </div>
+        }
+
+        <!-- STEP 2: Personal Details -->
+        @if (Model.CurrentStep == 2)
+        {
+            <div>
+                <h3 class="step-subtitle">@Localizer["Pasul 2: Detaliile Tale"]</h3>
+
+                @* IMPORTANT: this hidden field carries Model.Wizard.Role (set back in step 1)
+                   through this form's postback. Without it, Wizard.Role model-binds to an
+                   empty string here, which broke the branch below that decides whether to
+                   save EducationLevel or TeachingLevel. *@
+                <input type="hidden" asp-for="Wizard.Role" />
+
+                @if (Model.Wizard.Role == "Learn")
+                {
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: 500;">@Localizer["Nivel de studii"]</label>
+                        <select asp-for="Wizard.EducationLevel" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                            <option value="">@Localizer["Selectează nivelul tău de studii..."]</option>
+                            <option value="High School">@Localizer["Liceu"]</option>
+                            <option value="Some College">@Localizer["Facultate neterminată"]</option>
+                            <option value="College Graduate">@Localizer["Absolvent de facultate"]</option>
+                            <option value="University Student">@Localizer["Student"]</option>
+                            <option value="Graduate Student">@Localizer["Masterand"]</option>
+                            <option value="PhD">@Localizer["Doctorat"]</option>
+                            <option value="Self-Taught">@Localizer["Autodidact"]</option>
+                        </select>
+                        <span asp-validation-for="Wizard.EducationLevel" class="field-validation-error"></span>
+                    </div>
+                }
+                @if (Model.Wizard.Role == "Teach")
+                {
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: 500;">@Localizer["Nivel de experiență"]</label>
+                        <select asp-for="Wizard.TeachingLevel" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                            <option value="">@Localizer["Selectează nivelul tău de experiență..."]</option>
+                            <option value="Beginner">@Localizer["Începător"]</option>
+                            <option value="Intermediate">@Localizer["Intermediar"]</option>
+                            <option value="Advanced">@Localizer["Avansat"]</option>
+                            <option value="Expert">@Localizer["Expert"]</option>
+                            <option value="Professional">@Localizer["Profesionist"]</option>
+                        </select>
+                        <span asp-validation-for="Wizard.TeachingLevel" class="field-validation-error"></span>
+                    </div>
+                }
+
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: 500;">@Localizer["Vârstă"]</label>
+                    <input type="number" asp-for="Wizard.Age" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;" placeholder="@Localizer["Vârsta ta..."]" />
+                    <span asp-validation-for="Wizard.Age" class="field-validation-error"></span>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: 500;">@Localizer["Gen"]</label>
+                    <select asp-for="Wizard.Gender" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+                        <option value="">@Localizer["Selectează genul tău..."]</option>
+                        <option value="Male">@Localizer["Masculin"]</option>
+                        <option value="Female">@Localizer["Feminin"]</option>
+                        <option value="Non-Binary">@Localizer["Non-binar"]</option>
+                        <option value="Prefer not to say">@Localizer["Prefer să nu spun"]</option>
+                    </select>
+                    <span asp-validation-for="Wizard.Gender" class="field-validation-error"></span>
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="submit" class="btn btn-secondary" onclick="setAction('prev')">@Localizer["Înapoi"]</button>
+                    <button type="submit" class="btn btn-primary" onclick="setAction('next2')">@Localizer["Următorul"]</button>
+                </div>
+            </div>
+        }
+
+        <!-- STEP 3: Topic Selection - With Hover & Click Effects -->
+        @if (Model.CurrentStep == 3)
+        {
+            <div>
+                <h3 class="step-subtitle">@Localizer["Pasul 3: Selectează Materiile care Te Interesează"]</h3>
+                <p style="text-align: center; color: #6b7280; margin-bottom: 5px;">@Localizer["Selectează până la 3 materii"]</p>
+
+                <div class="selection-counter">
+                    @Localizer["Selectate:"] <span class="count" id="selectedCount">@Model.Wizard.SelectedTopics.Count</span> / 3
+                </div>
+
+                <div class="topics-grid" id="topicsGrid">
+                    @foreach (var topic in Model.AvailableTopics)
+                    {
+                        var isSelected = Model.Wizard.SelectedTopics.Contains(topic.Id);
+                        <label class="topic-card @(isSelected ? "selected" : "")" data-topic-id="@topic.Id">
+                            <input type="checkbox"
+                                   name="Wizard.SelectedTopics"
+                                   value="@topic.Id"
+                            @(isSelected ? "checked" : "")
+                                   onchange="handleTopicToggle(this)" />
+                            <span>@topic.Name</span>
+                        </label>
+                    }
+                </div>
+                <span asp-validation-for="Wizard.SelectedTopics" class="field-validation-error"></span>
+
+                <div class="nav-buttons">
+                    <button type="submit" class="btn btn-secondary" onclick="setAction('prev')">@Localizer["Înapoi"]</button>
+                    <button type="submit" class="btn btn-success" onclick="setAction('next')">@Localizer["Finalizează"]</button>
+                </div>
+            </div>
+        }
+    </form>
+
+    @* The navbar is stripped while the wizard is unfinished, so this is the only way out.
+       It has to sit outside the form above - HTML does not allow nested forms. Logging out
+       from here removes the half-registered account, which is what the sign-out handler
+       does for any account that never picked a role. *@
+    <form method="post" asp-page="./Logout" class="wizard-abandon">
+        <button type="submit" class="wizard-abandon-btn">
+            @Localizer["Renunță la înregistrare"]
+        </button>
+    </form>
+</div>
+
+<style>
+    .wizard-abandon {
+        text-align: center;
+        margin-top: 18px;
+    }
+
+    .wizard-abandon-btn {
+        background: none;
+        border: none;
+        padding: 6px 10px;
+        color: #6b7280;
+        font-size: 13px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+        .wizard-abandon-btn:hover {
+            color: #dc2626;
+        }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const alertMaxTopics = @Html.Raw(Json.Serialize(alertMaxTopics));
+
+        // Role selection styling
+        document.querySelectorAll('input[name="Wizard.Role"]').forEach(input => {
+            input.addEventListener('change', function() {
+                document.querySelectorAll('input[name="Wizard.Role"]').forEach(radio => {
+                    const label = document.querySelector(`label[for="${radio.id}"]`);
+                    if (radio.checked) {
+                        label.style.background = '#1f2937';
+                        label.style.color = 'white';
+                        label.style.borderColor = '#111827';
+                    } else {
+                        label.style.background = '#f0f2f5';
+                        label.style.color = '#374151';
+                        label.style.borderColor = '#d1d5db';
+                    }
+                });
+            });
+        });
+
+        function setAction(action) {
+            document.getElementById('wizardAction').value = action;
+        }
+
+        // Topic selection with hover and click effects
+        function handleTopicToggle(checkbox) {
+            const label = checkbox.closest('.topic-card');
+            const topicsGrid = document.getElementById('topicsGrid');
+            const selectedCheckboxes = topicsGrid.querySelectorAll('input[type="checkbox"]:checked');
+            const currentCount = selectedCheckboxes.length;
+
+            // If trying to select and already have 3 selected
+            if (checkbox.checked && currentCount > 3) {
+                checkbox.checked = false;
+                alert(alertMaxTopics);
+                return;
+            }
+
+            // Toggle selected class
+            if (checkbox.checked) {
+                label.classList.add('selected');
+            } else {
+                label.classList.remove('selected');
+            }
+
+            // Update counter
+            const updatedCount = topicsGrid.querySelectorAll('input[type="checkbox"]:checked').length;
+            document.getElementById('selectedCount').textContent = updatedCount;
+
+            // Add/remove max-selected class
+            if (updatedCount >= 3) {
+                topicsGrid.classList.add('max-selected');
+                // Disable unchecked ones
+                topicsGrid.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+                    cb.disabled = true;
+                    cb.closest('.topic-card').style.cursor = 'not-allowed';
+                    cb.closest('.topic-card').style.opacity = '0.6';
+                });
+            } else {
+                topicsGrid.classList.remove('max-selected');
+                topicsGrid.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.disabled = false;
+                    cb.closest('.topic-card').style.cursor = 'pointer';
+                    cb.closest('.topic-card').style.opacity = '1';
+                });
+            }
+        }
+
+        // Initialize topics on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const topicsGrid = document.getElementById('topicsGrid');
+            const checked = topicsGrid.querySelectorAll('input[type="checkbox"]:checked').length;
+            document.getElementById('selectedCount').textContent = checked;
+
+            if (checked >= 3) {
+                topicsGrid.classList.add('max-selected');
+                topicsGrid.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach(cb => {
+                    cb.disabled = true;
+                    cb.closest('.topic-card').style.cursor = 'not-allowed';
+                    cb.closest('.topic-card').style.opacity = '0.6';
+                });
+            }
+
+            // Role selection initialization
+            document.querySelectorAll('input[name="Wizard.Role"]').forEach(radio => {
+                const label = document.querySelector(`label[for="${radio.id}"]`);
+                if (radio.checked) {
+                    label.style.background = '#1f2937';
+                    label.style.color = 'white';
+                    label.style.borderColor = '#111827';
+                } else {
+                    label.style.background = '#f0f2f5';
+                    label.style.color = '#374151';
+                    label.style.borderColor = '#d1d5db';
+                }
+            });
+        });
+    </script>
+}

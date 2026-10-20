@@ -1,0 +1,10 @@
+﻿@model string
+
+@if (!string.IsNullOrEmpty(Model))
+{
+    <div class="status-message @(Model.Contains("Error") || Model.Contains("invalid") || Model.Contains("expirat") ? "error" : "success")">
+        <div class="status-message-content">
+            <span class="status-text">@Model</span>
+        </div>
+    </div>
+}

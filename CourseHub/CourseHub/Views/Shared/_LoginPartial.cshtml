@@ -1,0 +1,127 @@
+﻿﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<style>
+    .nav-link-custom {
+        color: rgba(255, 255, 255, 0.7) !important;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 15px;
+    }
+
+        .nav-link-custom:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+    .btn-logout-custom {
+        color: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 6px 16px;
+        transition: all 0.3s ease;
+        background: transparent;
+        font-weight: 500;
+        width: 100%;
+        text-align: center;
+    }
+
+        .btn-logout-custom:hover {
+            color: white;
+            background: rgba(220, 38, 38, 0.15);
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+
+    .btn-login-custom {
+        color: rgba(255, 255, 255, 0.7);
+        padding: 6px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+        .btn-login-custom:hover {
+            color: white;
+        }
+
+    .btn-signup-custom {
+        background: white;
+        color: #1f2937 !important;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+        .btn-signup-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+            color: #1f2937 !important;
+        }
+
+    .user-name {
+        color: white !important;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+        .user-name:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+    @@media (max-width: 991px) {
+        .btn-logout-custom {
+            width: auto;
+        }
+    }
+</style>
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link user-name" asp-area="Identity" asp-page="/Account/Manage/Index" title="@Localizer["Contul meu"]">
+                @User.Identity?.Name
+            </a>
+        </li>
+        <li class="nav-item d-none d-lg-block">
+            <a class="nav-link nav-link-custom" asp-controller="Connections" asp-action="Index">
+                @Localizer["Rețeaua mea"]
+            </a>
+        </li>
+        <li class="nav-item d-none d-lg-block">
+            <a class="nav-link nav-link-custom" asp-controller="Hire" asp-action="Requests">
+                @Localizer["Cereri"]
+            </a>
+        </li>
+        <li class="nav-item d-none d-lg-block">
+            <a class="nav-link nav-link-custom" asp-area="Identity" asp-page="/UploadTeaching">
+                @Localizer["Încarcă"]
+            </a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="btn btn-logout-custom">@Localizer["Deconectare"]</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="btn btn-login-custom" asp-area="Identity" asp-page="/Account/Register">@Localizer["Înregistrare"]</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-login-custom" asp-area="Identity" asp-page="/Account/Login">@Localizer["Autentificare"]</a>
+        </li>
+    }
+</ul>

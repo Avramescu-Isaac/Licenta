@@ -1,0 +1,112 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = Localizer["Eroare"];
+}
+
+<style>
+    .error-container {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 48px 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .error-icon {
+        font-size: 72px;
+        display: block;
+        margin-bottom: 16px;
+    }
+
+    .error-title {
+        color: #dc2626;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .error-subtitle {
+        color: #6b7280;
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    .error-code {
+        background: #f3f4f6;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-family: monospace;
+        color: #1f2937;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 14px 36px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin-top: 16px;
+    }
+
+    .btn-home:hover {
+        background: #374151;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(31, 41, 55, 0.25);
+        color: white;
+    }
+
+    .error-details {
+        text-align: left;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    .error-details strong {
+        color: #374151;
+    }
+
+    @@media (max-width: 640px) {
+        .error-container {
+            padding: 32px 24px;
+            margin: 20px 16px;
+        }
+
+        .error-title {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="error-container">
+    <h1 class="error-title">@Localizer["Ups! Ceva n-a mers bine"]</h1>
+    <p class="error-subtitle">@Localizer["Ne pare rău, dar a apărut o eroare în timpul procesării cererii dumneavoastră."]</p>
+
+    @if (Model.ShowRequestId)
+    {
+        <div class="error-code">@Localizer["ID cerere"]: @Model.RequestId</div>
+    }
+
+    <a href="/" class="btn-home">@Localizer["Înapoi la pagina principală"]</a>
+
+    <div class="error-details">
+        <p>
+            <strong>@Localizer["Mod dezvoltare"]:</strong><br />
+            @Localizer["Comutarea la mediul de Dezvoltare va afișa informații mai detaliate despre eroare."]
+        </p>
+        <p style="font-size: 13px; color: #9ca3af; margin-top: 8px;">
+            <strong>@Localizer["Important"]:</strong> @Localizer["Mediul de Dezvoltare nu ar trebui activat pentru aplicațiile publicate. Poate duce la afișarea unor informații sensibile din excepții către utilizatorii finali."]
+        </p>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Utilizatorul nu a fost găsit." xml:space="preserve">
+    <value>User not found.</value>
+  </data>
+  <data name="Numele de utilizator este deja folosit." xml:space="preserve">
+    <value>Username already taken.</value>
+  </data>
+  <data name="Emailul este deja folosit." xml:space="preserve">
+    <value>Email already taken.</value>
+  </data>
+  <data name="Nicio modificare efectuată." xml:space="preserve">
+    <value>No changes made.</value>
+  </data>
+  <data name="Cod de confirmare CourseHub" xml:space="preserve">
+    <value>CourseHub Confirmation Code</value>
+  </data>
+  <data name="Codul tău OTP este: &lt;strong&gt;{0}&lt;/strong&gt;" xml:space="preserve">
+    <value>Your OTP code is: &lt;strong&gt;{0}&lt;/strong&gt;</value>
+  </data>
+  <data name="Cod de verificare trimis. Te rugăm să-l introduci mai jos." xml:space="preserve">
+    <value>Verification code sent. Please enter it below.</value>
+  </data>
+  <data name="Cod invalid sau expirat." xml:space="preserve">
+    <value>Invalid or expired code.</value>
+  </data>
+  <data name="Poți selecta maximum 3 materii" xml:space="preserve">
+    <value>You can select maximum 3 subjects</value>
+  </data>
+  <data name="Profil actualizat cu succes!" xml:space="preserve">
+    <value>Profile updated successfully!</value>
+  </data>
+</root>

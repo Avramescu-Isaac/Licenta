@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Profil" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Se salvează..." xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="Se încarcă..." xml:space="preserve">
+    <value>Uploading...</value>
+  </data>
+  <data name="Gestionează-ți informațiile de profil" xml:space="preserve">
+    <value>Manage your profile information</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Avatar</value>
+  </data>
+  <data name="Schimbă avatarul" xml:space="preserve">
+    <value>Change avatar</value>
+  </data>
+  <data name="Elimină" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="JPG, PNG, WEBP sau GIF · max. 3 MB" xml:space="preserve">
+    <value>JPG, PNG, WEBP or GIF · max. 3 MB</value>
+  </data>
+  <data name="Nume de utilizator" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Bio" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="Povestește-ne puțin despre tine..." xml:space="preserve">
+    <value>Tell us a little about yourself...</value>
+  </data>
+  <data name="caractere" xml:space="preserve">
+    <value>characters</value>
+  </data>
+  <data name="Salvează Profilul" xml:space="preserve">
+    <value>Save Profile</value>
+  </data>
+  <data name="Deconectare" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+</root>

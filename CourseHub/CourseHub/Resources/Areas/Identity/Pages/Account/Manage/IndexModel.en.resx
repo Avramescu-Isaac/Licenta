@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Nicio modificare efectuată." xml:space="preserve">
+    <value>No changes made.</value>
+  </data>
+  <data name="Profil actualizat cu succes!" xml:space="preserve">
+    <value>Profile updated successfully!</value>
+  </data>
+  <data name="Te rugăm să selectezi o imagine." xml:space="preserve">
+    <value>Please select an image.</value>
+  </data>
+  <data name="Imaginea este prea mare. Dimensiunea maximă este 3 MB." xml:space="preserve">
+    <value>The image is too large. Maximum size is 3 MB.</value>
+  </data>
+  <data name="Format neacceptat. Folosește o imagine JPG, PNG, WEBP sau GIF." xml:space="preserve">
+    <value>Unsupported format. Please use a JPG, PNG, WEBP or GIF image.</value>
+  </data>
+  <data name="Avatar actualizat cu succes!" xml:space="preserve">
+    <value>Avatar updated successfully!</value>
+  </data>
+  <data name="Avatarul a fost eliminat." xml:space="preserve">
+    <value>Avatar removed.</value>
+  </data>
+  <data name="A apărut o eroare la încărcarea avatarului. Te rugăm să încerci din nou." xml:space="preserve">
+    <value>Something went wrong uploading the avatar. Please try again.</value>
+  </data>
+  <data name="A apărut o eroare la eliminarea avatarului. Te rugăm să încerci din nou." xml:space="preserve">
+    <value>Something went wrong removing the avatar. Please try again.</value>
+  </data>
+</root>

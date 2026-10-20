@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Nu îți poți schimba propriul rol de administrator." xml:space="preserve">
+    <value>You can't change your own administrator role.</value>
+  </data>
+  <data name="{0} nu mai este administrator." xml:space="preserve">
+    <value>{0} is no longer an administrator.</value>
+  </data>
+  <data name="{0} este acum administrator." xml:space="preserve">
+    <value>{0} is now an administrator.</value>
+  </data>
+  <data name="Nu îți poți șterge propriul cont din panoul de administrare." xml:space="preserve">
+    <value>You can't delete your own account from the admin panel.</value>
+  </data>
+  <data name="Contul {0} a fost șters." xml:space="preserve">
+    <value>Account {0} has been deleted.</value>
+  </data>
+  <data name="Contul nu a putut fi șters." xml:space="preserve">
+    <value>The account could not be deleted.</value>
+  </data>
+  <data name="Numele materiei este obligatoriu." xml:space="preserve">
+    <value>The subject name is required.</value>
+  </data>
+  <data name="Materia a fost adăugată." xml:space="preserve">
+    <value>Subject added.</value>
+  </data>
+  <data name="Materia a fost actualizată." xml:space="preserve">
+    <value>Subject updated.</value>
+  </data>
+  <data name="Materia a fost ștearsă." xml:space="preserve">
+    <value>Subject deleted.</value>
+  </data>
+  <data name="Nu te poți bloca pe tine însuți." xml:space="preserve">
+    <value>You can't ban yourself.</value>
+  </data>
+  <data name="Nu poți bloca un alt administrator." xml:space="preserve">
+    <value>You can't ban another administrator.</value>
+  </data>
+  <data name="Nu poți șterge un alt administrator." xml:space="preserve">
+    <value>You can't delete another administrator.</value>
+  </data>
+  <data name="{0} a fost blocat pentru 1 zi." xml:space="preserve">
+    <value>{0} has been banned for 1 day.</value>
+  </data>
+  <data name="{0} a fost blocat pentru 7 zile." xml:space="preserve">
+    <value>{0} has been banned for 7 days.</value>
+  </data>
+  <data name="{0} a fost blocat pentru 1 lună." xml:space="preserve">
+    <value>{0} has been banned for 1 month.</value>
+  </data>
+  <data name="{0} a fost blocat permanent." xml:space="preserve">
+    <value>{0} has been permanently banned.</value>
+  </data>
+  <data name="{0} a fost deblocat." xml:space="preserve">
+    <value>{0} has been unbanned.</value>
+  </data>
+  <data name="Durată de blocare necunoscută." xml:space="preserve">
+    <value>Unknown ban duration.</value>
+  </data>
+</root>

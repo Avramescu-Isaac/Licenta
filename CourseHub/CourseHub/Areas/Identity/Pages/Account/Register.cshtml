@@ -1,0 +1,336 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = Localizer["Înregistrare"];
+}
+
+<style>
+    /* Modern Register Styling */
+    .register-container {
+        max-width: 480px;
+        margin: 40px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .register-title {
+        text-align: center;
+        color: #1f2937;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .register-subtitle {
+        text-align: center;
+        color: #6b7280;
+        font-size: 16px;
+        margin-bottom: 32px;
+    }
+
+    .form-group-modern {
+        margin-bottom: 20px;
+    }
+
+        .form-group-modern label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-group-modern .input-wrapper {
+            position: relative;
+        }
+
+        .form-group-modern input,
+        .form-group-modern select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+            box-sizing: border-box;
+        }
+
+            .form-group-modern input:focus,
+            .form-group-modern select:focus {
+                outline: none;
+                border-color: #1f2937;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(31, 41, 55, 0.08);
+                transform: translateY(-1px);
+            }
+
+            .form-group-modern input:hover {
+                border-color: #9ca3af;
+                background: white;
+            }
+
+        .form-group-modern .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 18px;
+        }
+
+        .form-group-modern input.with-icon {
+            padding-left: 44px;
+        }
+
+    .field-validation-error {
+        color: #dc2626;
+        font-size: 13px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .validation-summary {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        color: #dc2626;
+    }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    .btn-register {
+        width: 100%;
+        padding: 14px;
+        background: #059669;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+    }
+
+        .btn-register:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(5, 150, 105, 0.25);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+    .register-links {
+        margin-top: 24px;
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+        .register-links p {
+            margin: 8px 0;
+        }
+
+        .register-links a {
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+            .register-links a:hover {
+                color: #000;
+                background: #f3f4f6;
+                text-decoration: underline;
+            }
+
+    /* reCAPTCHA styling */
+    .g-recaptcha {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+        transform: scale(0.92);
+        transform-origin: center;
+    }
+
+    /* Password strength indicator */
+    .password-strength {
+        height: 4px;
+        border-radius: 2px;
+        margin-top: 6px;
+        background: #e5e7eb;
+        transition: all 0.3s;
+        overflow: hidden;
+    }
+
+        .password-strength .bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+            .password-strength .bar.weak {
+                width: 33%;
+                background: #dc2626;
+            }
+
+            .password-strength .bar.medium {
+                width: 66%;
+                background: #f59e0b;
+            }
+
+            .password-strength .bar.strong {
+                width: 100%;
+                background: #16a34a;
+            }
+
+    /* Toggle password button */
+    .toggle-password {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 4px;
+        transition: all 0.2s;
+    }
+
+        .toggle-password:hover {
+            color: #374151;
+        }
+
+    /* Responsive */
+    @@media (max-width: 640px) {
+        .register-container {
+            padding: 24px;
+            margin: 20px 16px;
+        }
+    }
+</style>
+
+<div class="register-container">
+    <h1 class="register-title">@Localizer["Creează cont"]</h1>
+    <p class="register-subtitle">@Localizer["Alătură-te comunității noastre de învățare"]</p>
+
+    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+
+        <div class="form-group-modern">
+            <label asp-for="Input.Username">@Localizer["Nume de utilizator"]</label>
+            <div class="input-wrapper">
+                <input asp-for="Input.Username" class="with-icon" placeholder="@Localizer["Alege un nume de utilizator"]" />
+            </div>
+            <span asp-validation-for="Input.Username" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="Input.Email">@Localizer["Adresă de email"]</label>
+            <div class="input-wrapper">
+                <input asp-for="Input.Email" class="with-icon" autocomplete="username" aria-required="true" placeholder="nume@exemplu.com" />
+            </div>
+            <span asp-validation-for="Input.Email" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="Input.Password">@Localizer["Parolă"]</label>
+            <div class="input-wrapper">
+                <input asp-for="Input.Password" id="registerPassword" class="with-icon" autocomplete="new-password" aria-required="true" placeholder="@Localizer["Creează o parolă"]" oninput="checkPasswordStrength(this.value)" />
+                <button type="button" class="toggle-password" onclick="togglePassword()">@Localizer["Arată"]</button>
+            </div>
+            <div class="password-strength" id="strengthIndicator">
+                <div class="bar" id="strengthBar"></div>
+            </div>
+            <span asp-validation-for="Input.Password" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="Input.ConfirmPassword">@Localizer["Confirmă parola"]</label>
+            <div class="input-wrapper">
+                <input asp-for="Input.ConfirmPassword" class="with-icon" autocomplete="new-password" aria-required="true" placeholder="@Localizer["Confirmă parola"]" />
+            </div>
+            <span asp-validation-for="Input.ConfirmPassword" class="field-validation-error"></span>
+        </div>
+
+        <div class="g-recaptcha" data-sitekey="6Lf3BootAAAAAGaBfSMR0wj-LiN1YeZCtG_xiT8O"></div>
+
+        <button id="registerSubmit" type="submit" class="btn-register">@Localizer["Creează cont"]</button>
+
+        <div class="register-links">
+            <p>
+                @Localizer["Ai deja cont?"] <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">@Localizer["Autentifică-te"]</a>
+            </p>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('registerPassword');
+            const button = event.target;
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = 'Ascunde';
+            } else {
+                input.type = 'password';
+                button.textContent = 'Arată';
+            }
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            const bar = document.getElementById('strengthBar');
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+            bar.className = 'bar';
+            if (password.length === 0) {
+                bar.style.width = '0%';
+                return;
+            }
+
+            if (strength <= 2) {
+                bar.classList.add('weak');
+            } else if (strength <= 3) {
+                bar.classList.add('medium');
+            } else {
+                bar.classList.add('strong');
+            }
+        }
+
+        // Add focus effects
+        document.querySelectorAll('.form-group-modern input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.closest('.form-group-modern').querySelector('label').style.color = '#1f2937';
+            });
+            input.addEventListener('blur', function() {
+                this.closest('.form-group-modern').querySelector('label').style.color = '#374151';
+            });
+        });
+    </script>
+}

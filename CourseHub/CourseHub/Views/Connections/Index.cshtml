@@ -1,0 +1,190 @@
+﻿@model List<CourseHub.Models.ApplicationUser>
+@{
+    var isTeach = (bool)ViewBag.IsTeach;
+    var title = isTeach ? Localizer["Elevii tăi"] : Localizer["Profesorii tăi"];
+    ViewData["Title"] = title;
+}
+
+<style>
+    .connections-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px 0 40px;
+    }
+
+    .connections-title {
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .connections-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    .connections-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .connection-card {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid #f3f4f6;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: all 0.3s ease;
+    }
+
+        .connection-card:hover {
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+    .connection-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #1f2937;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+        .connection-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .connection-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .connection-name {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .connection-bio {
+        color: #9ca3af;
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-top: 2px;
+    }
+
+    .btn-connection-chat {
+        padding: 10px 20px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+        .btn-connection-chat:hover {
+            background: #374151;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 41, 55, 0.25);
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #9ca3af;
+    }
+
+        .empty-state .icon {
+            font-size: 56px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+        }
+
+    @@media (max-width: 480px) {
+        .connection-card {
+            flex-wrap: wrap;
+        }
+
+        .btn-connection-chat {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="connections-page">
+    <h1 class="connections-title">@title</h1>
+    <p class="connections-subtitle">
+        @(isTeach ? Localizer["Elevii cu care ai o colaborare activă"] : Localizer["Profesorii cu care ai o colaborare activă"])
+    </p>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <p>@Localizer["Nu ai încă nicio colaborare."]</p>
+        </div>
+    }
+    else
+    {
+        <div class="connections-list">
+            @foreach (var user in Model)
+            {
+                var initial = !string.IsNullOrEmpty(user.UserName) ? user.UserName[0].ToString().ToUpper() : "?";
+                <div class="connection-card">
+                    <div class="connection-avatar">
+                        @if (!string.IsNullOrEmpty(user.AvatarPath))
+                        {
+                            <img src="@user.AvatarPath" alt="" />
+                        }
+                        else
+                        {
+                            @initial
+                        }
+                    </div>
+                    <div class="connection-info">
+                        <div class="connection-name">@user.UserName</div>
+                        @if (!string.IsNullOrEmpty(user.Bio))
+                        {
+                            <div class="connection-bio">@user.Bio</div>
+                        }
+                    </div>
+                    <a href="/Chat/WithUser?userId=@user.Id" class="btn-connection-chat">@Localizer["Chat"]</a>
+                </div>
+            }
+        </div>
+    }
+</div>

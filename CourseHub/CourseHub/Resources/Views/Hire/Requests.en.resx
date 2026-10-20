@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Cereri de colaborare" xml:space="preserve">
+    <value>Collaboration Requests</value>
+  </data>
+  <data name="Elevi care vor să înveți cu ei" xml:space="preserve">
+    <value>Students who want to learn with you</value>
+  </data>
+  <data name="Nu ai nicio cerere în așteptare." xml:space="preserve">
+    <value>You don't have any pending requests.</value>
+  </data>
+  <data name="Acceptă" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="Respinge" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="Cererile mele" xml:space="preserve">
+    <value>My Requests</value>
+  </data>
+  <data name="Profesorii cărora le-ai trimis o cerere" xml:space="preserve">
+    <value>Teachers you've sent a request to</value>
+  </data>
+  <data name="Nu ai trimis nicio cerere încă. Caută un profesor și apasă Trimite cerere." xml:space="preserve">
+    <value>You haven't sent any requests yet. Search for a teacher and press Send request.</value>
+  </data>
+  <data name="Acceptat" xml:space="preserve">
+    <value>Accepted</value>
+  </data>
+  <data name="În așteptare" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Anulează" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+</root>

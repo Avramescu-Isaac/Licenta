@@ -1,0 +1,13 @@
+@using System.Globalization
+@{
+    var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<div class="lang-switcher">
+    <a class="lang-option @(currentCulture == "ro" ? "active" : "")"
+       href="@Url.Action("SetLanguage", "Culture", new { culture = "ro", returnUrl })">RO</a>
+    <span class="lang-sep">/</span>
+    <a class="lang-option @(currentCulture == "en" ? "active" : "")"
+       href="@Url.Action("SetLanguage", "Culture", new { culture = "en", returnUrl })">EN</a>
+</div>

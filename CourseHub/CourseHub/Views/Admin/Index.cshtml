@@ -1,0 +1,155 @@
+﻿@model CourseHub.Controllers.AdminDashboardStats
+@{
+    ViewData["Title"] = Localizer["Panou de administrare"];
+}
+
+<style>
+    .admin-page {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px 0 40px;
+    }
+
+    .admin-title {
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .admin-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    .admin-nav {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+    }
+
+    .admin-nav a {
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid #e5e7eb;
+        color: #374151;
+    }
+
+        .admin-nav a:hover {
+            border-color: #1f2937;
+            color: #1f2937;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .admin-nav a.active {
+            background: #1f2937;
+            border-color: #1f2937;
+            color: white;
+        }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid #f3f4f6;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+        .stat-card:hover {
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+    .stat-icon {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 2px;
+    }
+
+    .stat-card.highlight .stat-value {
+        color: #2563eb;
+    }
+
+    .stat-card.danger .stat-value {
+        color: #dc2626;
+    }
+</style>
+
+<div class="admin-page">
+    <h1 class="admin-title">@Localizer["Panou de administrare"]</h1>
+    <p class="admin-subtitle">@Localizer["Vedere generală asupra platformei"]</p>
+
+    <div class="admin-nav">
+        <a href="/Admin" class="active">@Localizer["Panou de control"]</a>
+        <a href="/Admin/Users">@Localizer["Utilizatori"]</a>
+        <a href="/Admin/Topics">@Localizer["Materii"]</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">@Model.TotalUsers</div>
+            <div class="stat-label">@Localizer["Utilizatori totali"]</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.TeachCount</div>
+            <div class="stat-label">@Localizer["Profesori"]</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.LearnCount</div>
+            <div class="stat-label">@Localizer["Elevi"]</div>
+        </div>
+        <div class="stat-card highlight">
+            <div class="stat-value">@Model.AdminCount</div>
+            <div class="stat-label">@Localizer["Administratori"]</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.TotalMessages</div>
+            <div class="stat-label">@Localizer["Mesaje trimise"]</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.PendingHireRequests</div>
+            <div class="stat-label">@Localizer["Cereri în așteptare"]</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.AcceptedHireRequests</div>
+            <div class="stat-label">@Localizer["Colaborări active"]</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">@Model.TotalTopics</div>
+            <div class="stat-label">@Localizer["Materii disponibile"]</div>
+        </div>
+        <div class="stat-card danger">
+            <div class="stat-value">@Model.BannedCount</div>
+            <div class="stat-label">@Localizer["Conturi blocate"]</div>
+        </div>
+    </div>
+</div>

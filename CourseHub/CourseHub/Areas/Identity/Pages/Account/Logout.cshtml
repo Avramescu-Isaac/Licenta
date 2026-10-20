@@ -1,0 +1,176 @@
+﻿@page
+@model CourseHub.Areas.Identity.Pages.Account.LogoutModel
+@using CourseHub.Models
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = Localizer["Deconectare"];
+    var loggingOutText = Localizer["Se deconectează..."].Value;
+}
+
+<style>
+    .logout-container {
+        max-width: 480px;
+        margin: 60px auto;
+        padding: 48px 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .logout-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        display: block;
+    }
+
+    .logout-title {
+        color: #1f2937;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .logout-subtitle {
+        color: #6b7280;
+        font-size: 16px;
+        margin-bottom: 32px;
+    }
+
+    .btn-logout {
+        padding: 14px 48px;
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .btn-logout:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-logout:active {
+            transform: translateY(0);
+        }
+
+    .logout-success {
+        padding: 20px;
+    }
+
+        .logout-success .checkmark {
+            font-size: 72px;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .logout-success h2 {
+            color: #059669;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .logout-success p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+    .logout-links {
+        margin-top: 24px;
+    }
+
+        .logout-links a {
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            padding: 8px 16px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+            .logout-links a:hover {
+                background: #f3f4f6;
+                text-decoration: underline;
+            }
+
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 0.8s ease-in-out infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .logout-container {
+            padding: 32px 24px;
+            margin: 20px 16px;
+        }
+    }
+</style>
+
+<div class="logout-container">
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <h1 class="logout-title">@Localizer["Gata de plecare?"]</h1>
+        <p class="logout-subtitle">@Localizer["Vei fi deconectat din contul tău"]</p>
+
+        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-logout" id="logoutBtn">
+                <span class="spinner" id="logoutSpinner" style="display: none;"></span>
+                <span id="logoutText">@Localizer["Deconectare"]</span>
+            </button>
+        </form>
+
+        <div class="logout-links">
+            <a asp-page="/Index">@Localizer["Înapoi acasă"]</a>
+        </div>
+    }
+    else
+    {
+        <div class="logout-success">
+            <h2>@Localizer["Deconectat cu Succes"]</h2>
+            <p>@Localizer["Ai fost deconectat din contul tău."]</p>
+            <div class="logout-links" style="margin-top: 16px;">
+                <a asp-page="./Login">@Localizer["Autentifică-te din nou"]</a>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loggingOutText = @Html.Raw(Json.Serialize(loggingOutText));
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                const btn = document.getElementById('logoutBtn');
+                const spinner = document.getElementById('logoutSpinner');
+                const text = document.getElementById('logoutText');
+                btn.disabled = true;
+                spinner.style.display = 'inline-block';
+                text.textContent = loggingOutText;
+                btn.style.opacity = '0.7';
+            });
+        }
+    });
+</script>

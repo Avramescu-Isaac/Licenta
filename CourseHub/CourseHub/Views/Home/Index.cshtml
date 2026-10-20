@@ -1,0 +1,312 @@
+﻿﻿@{
+ViewData["Title"] = Localizer["CourseHub - Înveți orice, Predai orice"];
+}
+
+<style>
+    /* Hero Section - Clean & Simple */
+    .hero-section {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        color: white;
+        padding: 60px 0 50px;
+        border-radius: 0 0 30px 30px;
+        margin: -20px -15px 30px -15px;
+    }
+
+    .hero-content {
+        max-width: 700px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .hero-title {
+        font-size: 42px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        line-height: 1.2;
+    }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+    .hero-subtitle {
+        font-size: 17px;
+        color: #9ca3af;
+        margin-bottom: 28px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        padding: 12px 32px;
+        background: white;
+        color: #1f2937;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+    .btn-hero-secondary {
+        padding: 12px 32px;
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-hero-secondary:hover {
+            border-color: white;
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Search Section - Clean */
+    .search-section {
+        max-width: 700px;
+        margin: 0 auto 40px;
+        padding: 0 20px;
+    }
+
+    .search-wrapper {
+        display: flex;
+        gap: 10px;
+        background: white;
+        border-radius: 12px;
+        padding: 5px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+
+        .search-wrapper:focus-within {
+            border-color: #1f2937;
+            box-shadow: 0 4px 20px rgba(31, 41, 55, 0.1);
+        }
+
+        .search-wrapper input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            background: transparent;
+            min-width: 0;
+        }
+
+            .search-wrapper input::placeholder {
+                color: #9ca3af;
+            }
+
+        .search-wrapper .btn-search {
+            padding: 12px 28px;
+            background: #1f2937;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .search-wrapper .btn-search:hover {
+                background: #374151;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(31, 41, 55, 0.2);
+            }
+
+    /* Quick Links Section */
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        max-width: 700px;
+        margin: 0 auto 40px;
+        padding: 0 20px;
+    }
+
+    .quick-link {
+        padding: 16px;
+        background: white;
+        border-radius: 12px;
+        border: 2px solid #f3f4f6;
+        text-align: center;
+        text-decoration: none;
+        color: #374151;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+        .quick-link:hover {
+            border-color: #1f2937;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+        .quick-link .icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 30px;
+        }
+
+        .hero-section {
+            padding: 40px 0 30px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .search-wrapper {
+            flex-direction: column;
+            padding: 12px;
+        }
+
+            .search-wrapper input {
+                padding: 12px;
+                border: 2px solid #e5e7eb;
+                border-radius: 8px;
+                background: #f9fafb;
+            }
+
+                .search-wrapper input:focus {
+                    border-color: #1f2937;
+                }
+
+            .search-wrapper .btn-search {
+                justify-content: center;
+                width: 100%;
+            }
+
+        .quick-links {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .hero-title {
+            font-size: 24px;
+        }
+
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+            .hero-buttons a {
+                width: 100%;
+                justify-content: center;
+            }
+
+        .quick-links {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .quick-link {
+            padding: 12px;
+            font-size: 13px;
+        }
+
+            .quick-link .icon {
+                font-size: 22px;
+            }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            @Localizer["Înveți & Predai"]<br />
+            <span class="highlight">@Localizer["Orice Îți Place"]</span>
+        </h1>
+        <p class="hero-subtitle">
+            @Localizer["Conectează-te cu elevi și profesori. Împărtășește cunoștințe, dezvoltă-ți abilitățile și construiește-ți viitorul."]
+        </p>
+        <div class="hero-buttons">
+            @if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <a href="/Identity/Account/Manage" class="btn-hero-primary">👤 @Localizer["Panou de Control"]</a>
+                <a href="/Identity/Account/Manage/EditProfile" class="btn-hero-secondary">✏️ @Localizer["Profil"]</a>
+            }
+            else
+            {
+                <a href="/Identity/Account/Register" class="btn-hero-primary">🚀 @Localizer["Începe Acum"]</a>
+                <a href="/Identity/Account/Login" class="btn-hero-secondary">🔑 @Localizer["Autentificare"]</a>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="search-section">
+    <form asp-controller="Search" asp-action="Index" method="get">
+        <div class="search-wrapper">
+            <input type="text" name="userName" placeholder="@Localizer["🔍 Caută după nume utilizator, rol, nivel sau materie..."]" />
+            <button type="submit" class="btn-search">@Localizer["Caută"]</button>
+        </div>
+    </form>
+</div>
+
+<!-- Quick Links -->
+<div class="quick-links">
+    <a href="/Search" class="quick-link">
+        <span class="icon">👥</span>
+        @Localizer["Găsește Persoane"]
+    </a>
+    <a href="/Connections" class="quick-link">
+        <span class="icon">🤝</span>
+        @Localizer["Colaborări"]
+    </a>
+    <a href="/Hire/Requests" class="quick-link">
+        <span class="icon">📩</span>
+        @Localizer["Cereri de colaborare"]
+    </a>
+</div>

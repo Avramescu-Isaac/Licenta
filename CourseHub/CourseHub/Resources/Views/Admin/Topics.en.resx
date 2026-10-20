@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Materii" xml:space="preserve">
+    <value>Subjects</value>
+  </data>
+  <data name="Adaugă, editează sau elimină materiile disponibile pe platformă" xml:space="preserve">
+    <value>Add, edit, or remove the subjects available on the platform</value>
+  </data>
+  <data name="Panou de control" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Utilizatori" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Adaugă o materie nouă" xml:space="preserve">
+    <value>Add a new subject</value>
+  </data>
+  <data name="Nume (ex: Istorie)" xml:space="preserve">
+    <value>Name (e.g. History)</value>
+  </data>
+  <data name="Descriere scurtă" xml:space="preserve">
+    <value>Short description</value>
+  </data>
+  <data name="Adaugă" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Editează" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Șterge" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Salvează" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Anulează" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Sigur vrei să ștergi această materie? Va fi eliminată din profilul tuturor utilizatorilor care au selectat-o." xml:space="preserve">
+    <value>Are you sure you want to delete this subject? It will be removed from the profile of every user who selected it.</value>
+  </data>
+</root>

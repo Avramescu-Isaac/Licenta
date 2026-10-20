@@ -1,0 +1,19 @@
+﻿@model List<CourseHub.Models.HireRequest>
+@{
+    ViewData["Title"] = Localizer["Cereri de colaborare"];
+}
+
+<h2>@Localizer["Cereri de colaborare"]</h2>
+
+<ul>
+    @foreach (var req in Model)
+    {
+        <li>
+            @req.Requester.UserName
+            <form asp-action="Accept" asp-controller="Hire" method="post" style="display:inline">
+                <input type="hidden" name="id" value="@req.Id" />
+                <button class="btn btn-success btn-sm" type="submit">@Localizer["Acceptă"]</button>
+            </form>
+        </li>
+    }
+</ul>

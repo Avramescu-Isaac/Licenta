@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Editează Profilul" xml:space="preserve">
+    <value>Edit Profile</value>
+  </data>
+  <data name="Poți selecta maximum 3 materii!" xml:space="preserve">
+    <value>You can select maximum 3 subjects!</value>
+  </data>
+  <data name="Se trimite..." xml:space="preserve">
+    <value>Sending...</value>
+  </data>
+  <data name="Se salvează..." xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="Actualizează-ți informațiile de profil" xml:space="preserve">
+    <value>Update your profile information</value>
+  </data>
+  <data name="Materiile Tale de Interes" xml:space="preserve">
+    <value>Your Learning Subjects</value>
+  </data>
+  <data name="Selectează până la 3 materii care te interesează" xml:space="preserve">
+    <value>Select up to 3 subjects you're interested in</value>
+  </data>
+  <data name="Selectate:" xml:space="preserve">
+    <value>Selected:</value>
+  </data>
+  <data name="Nume de utilizator" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Introdu numele de utilizator" xml:space="preserve">
+    <value>Enter your username</value>
+  </data>
+  <data name="Adresă de email" xml:space="preserve">
+    <value>Email Address</value>
+  </data>
+  <data name="Introdu emailul" xml:space="preserve">
+    <value>Enter your email</value>
+  </data>
+  <data name="Verificare Necesară" xml:space="preserve">
+    <value>Verification Required</value>
+  </data>
+  <data name="Introdu codul din 6 cifre trimis pe emailul tău pentru a confirma modificările" xml:space="preserve">
+    <value>Enter the 6-digit code sent to your email to confirm changes</value>
+  </data>
+  <data name="Cod de verificare" xml:space="preserve">
+    <value>Verification Code</value>
+  </data>
+  <data name="Introdu codul din 6 cifre" xml:space="preserve">
+    <value>Enter 6-digit code</value>
+  </data>
+  <data name="Salvează Modificările" xml:space="preserve">
+    <value>Save Changes</value>
+  </data>
+  <data name="Trimite Cod de Verificare" xml:space="preserve">
+    <value>Send Verification Code</value>
+  </data>
+  <data name="Nivel de studii" xml:space="preserve">
+    <value>Level of Studies</value>
+  </data>
+  <data name="Selectează nivelul tău de studii..." xml:space="preserve">
+    <value>Select your level of studies...</value>
+  </data>
+  <data name="Liceu" xml:space="preserve">
+    <value>High School</value>
+  </data>
+  <data name="Facultate neterminată" xml:space="preserve">
+    <value>Some College</value>
+  </data>
+  <data name="Absolvent de facultate" xml:space="preserve">
+    <value>College Graduate</value>
+  </data>
+  <data name="Student" xml:space="preserve">
+    <value>University Student</value>
+  </data>
+  <data name="Masterand" xml:space="preserve">
+    <value>Graduate Student</value>
+  </data>
+  <data name="Doctorat" xml:space="preserve">
+    <value>PhD</value>
+  </data>
+  <data name="Autodidact" xml:space="preserve">
+    <value>Self-Taught</value>
+  </data>
+  <data name="Nivel de experiență" xml:space="preserve">
+    <value>Experience Level</value>
+  </data>
+  <data name="Selectează nivelul tău de experiență..." xml:space="preserve">
+    <value>Select your teaching level...</value>
+  </data>
+  <data name="Începător" xml:space="preserve">
+    <value>Beginner</value>
+  </data>
+  <data name="Intermediar" xml:space="preserve">
+    <value>Intermediate</value>
+  </data>
+  <data name="Avansat" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="Expert" xml:space="preserve">
+    <value>Expert</value>
+  </data>
+  <data name="Profesionist" xml:space="preserve">
+    <value>Professional</value>
+  </data>
+</root>

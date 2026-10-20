@@ -1,0 +1,204 @@
+﻿@model List<CourseHub.Models.Message>
+@{
+    var targetUser = ViewBag.TargetUser as CourseHub.Models.ApplicationUser;
+    var receiversById = ViewBag.ReceiversById as Dictionary<string, CourseHub.Models.ApplicationUser> ?? new Dictionary<string, CourseHub.Models.ApplicationUser>();
+    ViewData["Title"] = Localizer["Mesajele lui {0}", targetUser?.UserName];
+
+    var imageExtensions = new[] { ".png", ".jpg", ".jpeg", ".gif", ".webp" };
+    bool IsImage(string? path) =>
+        !string.IsNullOrEmpty(path) && imageExtensions.Contains(System.IO.Path.GetExtension(path).ToLowerInvariant());
+}
+
+<style>
+    .admin-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px 0 40px;
+    }
+
+    .admin-title {
+        color: #1f2937;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .admin-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #1f2937;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+    .messages-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .msg-card {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid #f3f4f6;
+        padding: 14px 16px;
+    }
+
+    .msg-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .msg-recipient {
+        font-size: 13px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .msg-recipient .arrow {
+        color: #9ca3af;
+        font-weight: 400;
+        margin-right: 4px;
+    }
+
+    .msg-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .msg-timestamp {
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    .msg-read-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+
+        .msg-read-badge.read {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .msg-read-badge.unread {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+    .msg-content {
+        color: #374151;
+        font-size: 14px;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .msg-image {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin-top: 6px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .msg-file-card {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #1f2937;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+        .msg-file-card:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+            text-decoration: none;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #9ca3af;
+    }
+
+        .empty-state .icon {
+            font-size: 56px;
+            display: block;
+            margin-bottom: 12px;
+        }
+</style>
+
+<div class="admin-page">
+    <a href="/Admin/Users" class="back-link">@Localizer["Înapoi la utilizatori"]</a>
+
+    <h1 class="admin-title">@ViewData["Title"]</h1>
+    <p class="admin-subtitle">@Localizer["Toate mesajele trimise de acest cont, în scop de moderare."]</p>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <p>@Localizer["Acest utilizator nu a trimis niciun mesaj."]</p>
+        </div>
+    }
+    else
+    {
+        <div class="messages-list">
+            @foreach (var msg in Model)
+            {
+                var receiverName = receiversById.TryGetValue(msg.ReceiverId, out var receiver) ? receiver.UserName : "?";
+                <div class="msg-card">
+                    <div class="msg-header">
+                        <div class="msg-recipient">@receiverName</div>
+                        <div class="msg-meta">
+                            <span class="msg-read-badge @(msg.IsRead ? "read" : "unread")">
+                                @(msg.IsRead ? Localizer["Citit"] : Localizer["Necitit"])
+                            </span>
+                            <span class="msg-timestamp">@msg.Timestamp.ToString("dd MMM yyyy, HH:mm")</span>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(msg.FilePath) && IsImage(msg.FilePath))
+                    {
+                        <a href="@msg.FilePath" target="_blank" rel="noopener">
+                            <img src="@msg.FilePath" alt="@msg.FileName" class="msg-image" />
+                        </a>
+                    }
+                    else if (!string.IsNullOrEmpty(msg.FilePath))
+                    {
+                        <a href="@msg.FilePath" download="@msg.FileName" class="msg-file-card">@msg.FileName</a>
+                    }
+                    else
+                    {
+                        <div class="msg-content">@msg.Content</div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

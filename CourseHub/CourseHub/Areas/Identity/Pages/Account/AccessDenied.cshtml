@@ -1,0 +1,82 @@
+@page
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = Localizer["Acces interzis"];
+}
+
+@* Overrides the default page shipped with Microsoft.AspNetCore.Identity.UI, whose text is
+   English-only and therefore stayed untranslated when the rest of the interface switched
+   language. This is the page a user reaches when they open a conversation they have no
+   accepted collaboration for. *@
+
+<style>
+    .denied-container {
+        max-width: 440px;
+        margin: 80px auto;
+        padding: 48px 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .denied-icon {
+        font-size: 72px;
+        display: block;
+        margin-bottom: 16px;
+    }
+
+    .denied-title {
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .denied-subtitle {
+        color: #6b7280;
+        font-size: 16px;
+        margin-bottom: 32px;
+        line-height: 1.6;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 14px 48px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-home:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(31, 41, 55, 0.25);
+            color: white;
+        }
+
+        .btn-home:active {
+            transform: translateY(0);
+        }
+
+    @@media (max-width: 640px) {
+        .denied-container {
+            padding: 32px 24px;
+            margin: 20px 16px;
+        }
+    }
+</style>
+
+<div class="denied-container">
+    <h1 class="denied-title">@Localizer["Acces interzis"]</h1>
+    <p class="denied-subtitle">
+        @Localizer["Nu ai acces la această resursă."]<br />
+        @Localizer["Poți discuta doar cu utilizatorii cu care ai o colaborare acceptată."]
+    </p>
+    <a asp-controller="Home" asp-action="Index" class="btn-home">@Localizer["Înapoi la pagina principală"]</a>
+</div>

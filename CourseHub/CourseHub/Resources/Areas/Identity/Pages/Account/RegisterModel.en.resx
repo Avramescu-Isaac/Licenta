@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Codul tău de verificare" xml:space="preserve">
+    <value>Your verification code</value>
+  </data>
+  <data name="Codul tău de verificare este: &lt;b&gt;{0}&lt;/b&gt;. Este valabil 10 minute." xml:space="preserve">
+    <value>Your verification code is: &lt;b&gt;{0}&lt;/b&gt;. It is valid for 10 minutes.</value>
+  </data>
+  <data name="Nu am putut trimite emailul. Verifică SMTP-ul." xml:space="preserve">
+    <value>We couldn't send the email. Please check your SMTP settings.</value>
+  </data>
+  <data name="Te rugăm să confirmi că nu ești un robot." xml:space="preserve">
+    <value>Please confirm you're not a robot.</value>
+  </data>
+</root>

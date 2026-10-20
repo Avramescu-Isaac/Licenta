@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Deconectare" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="Se deconectează..." xml:space="preserve">
+    <value>Logging out...</value>
+  </data>
+  <data name="Gata de plecare?" xml:space="preserve">
+    <value>Ready to leave?</value>
+  </data>
+  <data name="Vei fi deconectat din contul tău" xml:space="preserve">
+    <value>You'll be signed out of your account</value>
+  </data>
+  <data name="Înapoi acasă" xml:space="preserve">
+    <value>Back to home</value>
+  </data>
+  <data name="Deconectat cu Succes" xml:space="preserve">
+    <value>Successfully Logged Out</value>
+  </data>
+  <data name="Ai fost deconectat din contul tău." xml:space="preserve">
+    <value>You have been signed out of your account.</value>
+  </data>
+  <data name="Autentifică-te din nou" xml:space="preserve">
+    <value>Sign in again</value>
+  </data>
+</root>

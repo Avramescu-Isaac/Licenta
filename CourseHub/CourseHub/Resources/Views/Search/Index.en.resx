@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Caută profesori sau elevi" xml:space="preserve">
+    <value>Search for teachers or students</value>
+  </data>
+  <data name="Găsește partenerul potrivit pentru a învăța sau a preda" xml:space="preserve">
+    <value>Find the right partner to learn or teach with</value>
+  </data>
+  <data name="Nume utilizator" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Caută..." xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="Rol" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Toate" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Predă" xml:space="preserve">
+    <value>Teaches</value>
+  </data>
+  <data name="Învață" xml:space="preserve">
+    <value>Learns</value>
+  </data>
+  <data name="Nivel de experiență" xml:space="preserve">
+    <value>Experience level</value>
+  </data>
+  <data name="Materie" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Toate materiile" xml:space="preserve">
+    <value>All subjects</value>
+  </data>
+  <data name="Caută" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Rezultate" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="Trimite cerere" xml:space="preserve">
+    <value>Send request</value>
+  </data>
+  <data name="Niciun rezultat găsit. Încearcă alți termeni de căutare." xml:space="preserve">
+    <value>No results found. Try different search terms.</value>
+  </data>
+</root>

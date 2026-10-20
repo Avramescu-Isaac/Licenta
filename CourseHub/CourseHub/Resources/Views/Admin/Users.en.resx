@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Utilizatori" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Gestionează conturile și rolurile de administrator" xml:space="preserve">
+    <value>Manage accounts and administrator roles</value>
+  </data>
+  <data name="Panou de control" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Materii" xml:space="preserve">
+    <value>Subjects</value>
+  </data>
+  <data name="Predă" xml:space="preserve">
+    <value>Teaches</value>
+  </data>
+  <data name="Învață" xml:space="preserve">
+    <value>Learns</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Tu" xml:space="preserve">
+    <value>You</value>
+  </data>
+  <data name="Elimină admin" xml:space="preserve">
+    <value>Remove admin</value>
+  </data>
+  <data name="Fă administrator" xml:space="preserve">
+    <value>Make admin</value>
+  </data>
+  <data name="Șterge" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Sigur vrei să ștergi acest cont? Toate mesajele, cererile și avatarul asociate vor fi șterse permanent." xml:space="preserve">
+    <value>Are you sure you want to delete this account? All associated messages, requests, and the avatar will be permanently deleted.</value>
+  </data>
+  <data name="Roluri din tabela AspNetRoles" xml:space="preserve">
+    <value>Roles from the AspNetRoles table</value>
+  </data>
+  <data name="Sigur vrei să aplici '{1}' pentru {0}?" xml:space="preserve">
+    <value>Are you sure you want to apply '{1}' to {0}?</value>
+  </data>
+  <data name="Blocat până la" xml:space="preserve">
+    <value>Banned until</value>
+  </data>
+  <data name="Blocat permanent" xml:space="preserve">
+    <value>Permanently banned</value>
+  </data>
+  <data name="Mesaje" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="Blochează..." xml:space="preserve">
+    <value>Ban...</value>
+  </data>
+  <data name="1 zi" xml:space="preserve">
+    <value>1 day</value>
+  </data>
+  <data name="7 zile" xml:space="preserve">
+    <value>7 days</value>
+  </data>
+  <data name="1 lună" xml:space="preserve">
+    <value>1 month</value>
+  </data>
+  <data name="Permanent" xml:space="preserve">
+    <value>Permanent</value>
+  </data>
+  <data name="Deblochează" xml:space="preserve">
+    <value>Unban</value>
+  </data>
+</root>

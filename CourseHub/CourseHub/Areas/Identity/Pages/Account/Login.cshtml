@@ -1,0 +1,303 @@
+﻿@page
+@model LoginModel
+@using CourseHub.Models
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = Localizer["Autentificare"];
+}
+
+<style>
+    /* Modern Login Styling */
+    .login-container {
+        max-width: 480px;
+        margin: 40px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .login-title {
+        text-align: center;
+        color: #1f2937;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+        text-align: center;
+        color: #6b7280;
+        font-size: 16px;
+        margin-bottom: 32px;
+    }
+
+    .form-group-modern {
+        margin-bottom: 20px;
+    }
+
+        .form-group-modern label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-group-modern .input-wrapper {
+            position: relative;
+        }
+
+        .form-group-modern input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+            .form-group-modern input:focus {
+                outline: none;
+                border-color: #1f2937;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(31, 41, 55, 0.08);
+                transform: translateY(-1px);
+            }
+
+            .form-group-modern input:hover {
+                border-color: #9ca3af;
+                background: white;
+            }
+
+        .form-group-modern .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 18px;
+        }
+
+        .form-group-modern input.with-icon {
+            padding-left: 44px;
+        }
+
+    .checkbox-modern {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+        cursor: pointer;
+    }
+
+        .checkbox-modern input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1f2937;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+            .checkbox-modern input[type="checkbox"]:hover {
+                transform: scale(1.1);
+            }
+
+        .checkbox-modern label {
+            color: #374151;
+            font-weight: 400;
+            cursor: pointer;
+            user-select: none;
+        }
+
+    .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+    }
+
+        .btn-login:hover {
+            background: #374151;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(31, 41, 55, 0.25);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+    .login-links {
+        margin-top: 24px;
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+        .login-links p {
+            margin: 8px 0;
+        }
+
+        .login-links a {
+            color: #1f2937;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+            .login-links a:hover {
+                color: #000;
+                background: #f3f4f6;
+                text-decoration: underline;
+            }
+
+    .validation-summary {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        color: #dc2626;
+    }
+
+        .validation-summary ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    .field-validation-error {
+        color: #dc2626;
+        font-size: 13px;
+        margin-top: 4px;
+        display: block;
+    }
+
+    /* Password toggle button */
+    .toggle-password {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 4px;
+        transition: all 0.2s;
+    }
+
+        .toggle-password:hover {
+            color: #374151;
+        }
+
+    /* Alert messages */
+    .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+
+    .alert-danger {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+    }
+
+    .alert-success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #16a34a;
+    }
+
+    /* Responsive */
+    @@media (max-width: 640px) {
+        .login-container {
+            padding: 24px;
+            margin: 20px 16px;
+        }
+    }
+</style>
+
+<div class="login-container">
+    <h1 class="login-title">@Localizer["Bine ai revenit"]</h1>
+    <p class="login-subtitle">@Localizer["Autentifică-te pentru a continua să înveți"]</p>
+
+    <form id="account" method="post">
+        <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+
+        <div class="form-group-modern">
+            <label asp-for="Input.EmailOrUsername">@Localizer["Email sau nume de utilizator"]</label>
+            <div class="input-wrapper">
+                <input asp-for="Input.EmailOrUsername" class="with-icon" autocomplete="username" aria-required="true" placeholder="@Localizer["Introdu emailul sau numele de utilizator"]" />
+            </div>
+            <span asp-validation-for="Input.EmailOrUsername" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group-modern">
+            <label asp-for="Input.Password">@Localizer["Parolă"]</label>
+            <div class="input-wrapper">
+                <input asp-for="Input.Password" id="passwordInput" class="with-icon" autocomplete="current-password" aria-required="true" placeholder="@Localizer["Introdu parola"]" />
+                <button type="button" class="toggle-password" onclick="togglePassword()">@Localizer["Arată"]</button>
+            </div>
+            <span asp-validation-for="Input.Password" class="field-validation-error"></span>
+        </div>
+
+        <div class="checkbox-modern">
+            <input asp-for="Input.RememberMe" />
+            <label asp-for="Input.RememberMe">@Localizer["Ține-mă minte"]</label>
+        </div>
+
+        <button id="login-submit" type="submit" class="btn-login">@Localizer["Autentificare"]</button>
+
+        <div class="login-links">
+            <p>
+                <a id="forgot-password" asp-page="./ResetPassword">@Localizer["Ai uitat parola?"]</a>
+            </p>
+            <p>
+                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">@Localizer["Înregistrează-te ca utilizator nou"]</a>
+            </p>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const button = event.target;
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = 'Ascunde';
+            } else {
+                input.type = 'password';
+                button.textContent = 'Arată';
+            }
+        }
+
+        // Add focus effects
+        document.querySelectorAll('.form-group-modern input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.closest('.form-group-modern').querySelector('label').style.color = '#1f2937';
+            });
+            input.addEventListener('blur', function() {
+                this.closest('.form-group-modern').querySelector('label').style.color = '#374151';
+            });
+        });
+    </script>
+}

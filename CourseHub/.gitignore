@@ -1,0 +1,14 @@
+# Visual Studio and generated build files
+.vs/
+**/bin/
+**/obj/
+*.user
+*.suo
+*.local.json
+# Private local overrides and credentials
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+*.pfx
+*.p12

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CourseHub - Înveți orice, Predai orice" xml:space="preserve">
+    <value>CourseHub - Learn Anything, Teach Anything</value>
+  </data>
+  <data name="Înveți &amp; Predai" xml:space="preserve">
+    <value>Learn &amp; Teach</value>
+  </data>
+  <data name="Orice Îți Place" xml:space="preserve">
+    <value>Anything You Love</value>
+  </data>
+  <data name="Conectează-te cu elevi și profesori. Împărtășește cunoștințe, dezvoltă-ți abilitățile și construiește-ți viitorul." xml:space="preserve">
+    <value>Connect with learners and teachers. Share knowledge, grow skills, and build your future.</value>
+  </data>
+  <data name="Panou de Control" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Profil" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Începe Acum" xml:space="preserve">
+    <value>Get Started</value>
+  </data>
+  <data name="Autentificare" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="🔍 Caută după nume utilizator, rol, nivel sau materie..." xml:space="preserve">
+    <value>🔍 Search by username, role, level or subject...</value>
+  </data>
+  <data name="Caută" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Găsește Persoane" xml:space="preserve">
+    <value>Find People</value>
+  </data>
+  <data name="Colaborări" xml:space="preserve">
+    <value>Collaborations</value>
+  </data>
+  <data name="Cereri de colaborare" xml:space="preserve">
+    <value>Collaboration Requests</value>
+  </data>
+</root>

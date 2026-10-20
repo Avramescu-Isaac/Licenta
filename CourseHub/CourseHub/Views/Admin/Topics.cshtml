@@ -1,0 +1,362 @@
+﻿@model List<CourseHub.Models.Topic>
+@{
+    ViewData["Title"] = Localizer["Materii"];
+    var confirmDeleteTopicText = Localizer["Sigur vrei să ștergi această materie? Va fi eliminată din profilul tuturor utilizatorilor care au selectat-o."].Value;
+}
+
+<style>
+    .admin-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px 0 40px;
+    }
+
+    .admin-title {
+        color: #1f2937;
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .admin-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 28px;
+        text-align: center;
+    }
+
+    .admin-nav {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+    }
+
+    .admin-nav a {
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid #e5e7eb;
+        color: #374151;
+    }
+
+        .admin-nav a:hover {
+            border-color: #1f2937;
+            color: #1f2937;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        .admin-nav a.active {
+            background: #1f2937;
+            border-color: #1f2937;
+            color: white;
+        }
+
+    .admin-alert {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+        .admin-alert.success {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #16a34a;
+        }
+
+        .admin-alert.error {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #dc2626;
+        }
+
+    .new-topic-card {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid #f3f4f6;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .new-topic-card h5 {
+        color: #1f2937;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .new-topic-form {
+        display: grid;
+        grid-template-columns: 1fr 2fr auto;
+        gap: 10px;
+        align-items: start;
+    }
+
+    .new-topic-form input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+        box-sizing: border-box;
+    }
+
+        .new-topic-form input:focus {
+            outline: none;
+            border-color: #1f2937;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(31, 41, 55, 0.08);
+        }
+
+    .btn-add-topic {
+        padding: 10px 20px;
+        background: #1f2937;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+        .btn-add-topic:hover {
+            background: #374151;
+        }
+
+    .topics-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .topic-row {
+        background: white;
+        border-radius: 14px;
+        border: 2px solid #f3f4f6;
+        padding: 14px 16px;
+        transition: all 0.3s ease;
+    }
+
+        .topic-row:hover {
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+    .topic-row-display {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .topic-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .topic-name {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 15px;
+    }
+
+    .topic-desc {
+        color: #9ca3af;
+        font-size: 13px;
+        margin-top: 2px;
+    }
+
+    .topic-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .btn-topic-action {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-edit-topic {
+        background: transparent;
+        border: 1.5px solid #2563eb;
+        color: #2563eb;
+    }
+
+        .btn-edit-topic:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+    .btn-delete-topic {
+        background: transparent;
+        border: 1.5px solid #dc2626;
+        color: #dc2626;
+    }
+
+        .btn-delete-topic:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+    .topic-row-edit {
+        display: none;
+        grid-template-columns: 1fr 2fr auto auto;
+        gap: 10px;
+        align-items: start;
+    }
+
+        .topic-row-edit.active {
+            display: grid;
+        }
+
+        .topic-row-edit input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #f9fafb;
+            box-sizing: border-box;
+        }
+
+            .topic-row-edit input:focus {
+                outline: none;
+                border-color: #1f2937;
+                background: white;
+            }
+
+    .btn-save-topic {
+        padding: 9px 16px;
+        background: #059669;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .btn-save-topic:hover {
+            background: #047857;
+        }
+
+    .btn-cancel-edit {
+        padding: 9px 16px;
+        background: #f3f4f6;
+        color: #374151;
+        border: none;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    @@media (max-width: 640px) {
+        .new-topic-form,
+        .topic-row-edit {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="admin-page">
+    <h1 class="admin-title">@Localizer["Materii"]</h1>
+    <p class="admin-subtitle">@Localizer["Adaugă, editează sau elimină materiile disponibile pe platformă"]</p>
+
+    <div class="admin-nav">
+        <a href="/Admin">@Localizer["Panou de control"]</a>
+        <a href="/Admin/Users">@Localizer["Utilizatori"]</a>
+        <a href="/Admin/Topics" class="active">@Localizer["Materii"]</a>
+    </div>
+
+    @if (TempData["AdminMessage"] != null)
+    {
+        <div class="admin-alert success">@TempData["AdminMessage"]</div>
+    }
+    @if (TempData["AdminError"] != null)
+    {
+        <div class="admin-alert error">@TempData["AdminError"]</div>
+    }
+
+    <div class="new-topic-card">
+        <h5>@Localizer["Adaugă o materie nouă"]</h5>
+        <form method="post" asp-action="CreateTopic" asp-controller="Admin" class="new-topic-form">
+            <input type="text" name="name" placeholder="@Localizer["Nume (ex: Istorie)"]" required />
+            <input type="text" name="description" placeholder="@Localizer["Descriere scurtă"]" />
+            <button type="submit" class="btn-add-topic">@Localizer["Adaugă"]</button>
+        </form>
+    </div>
+
+    <div class="topics-list">
+        @foreach (var topic in Model)
+        {
+            <div class="topic-row">
+                <div class="topic-row-display" id="display-@topic.Id">
+                    <div class="topic-info">
+                        <div class="topic-name">@topic.Name</div>
+                        @if (!string.IsNullOrEmpty(topic.Description))
+                        {
+                            <div class="topic-desc">@topic.Description</div>
+                        }
+                    </div>
+                    <div class="topic-actions">
+                        <button type="button" class="btn-topic-action btn-edit-topic" onclick="toggleEdit(@topic.Id)">@Localizer["Editează"]</button>
+                        <form method="post" asp-action="DeleteTopic" asp-controller="Admin" class="js-confirm-delete-topic" style="display:inline">
+                            <input type="hidden" name="id" value="@topic.Id" />
+                            <button type="submit" class="btn-topic-action btn-delete-topic">@Localizer["Șterge"]</button>
+                        </form>
+                    </div>
+                </div>
+
+                <form method="post" asp-action="EditTopic" asp-controller="Admin" class="topic-row-edit" id="edit-@topic.Id">
+                    <input type="hidden" name="id" value="@topic.Id" />
+                    <input type="text" name="name" value="@topic.Name" required />
+                    <input type="text" name="description" value="@topic.Description" />
+                    <button type="submit" class="btn-save-topic">@Localizer["Salvează"]</button>
+                    <button type="button" class="btn-cancel-edit" onclick="toggleEdit(@topic.Id)">@Localizer["Anulează"]</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleEdit(id) {
+            var display = document.getElementById('display-' + id);
+            var edit = document.getElementById('edit-' + id);
+            var showingEdit = edit.classList.toggle('active');
+            display.style.display = showingEdit ? 'none' : 'flex';
+        }
+
+        (function () {
+            var confirmText = @Html.Raw(Json.Serialize(confirmDeleteTopicText));
+            document.querySelectorAll('.js-confirm-delete-topic').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
+                    if (!confirm(confirmText)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        })();
+    </script>
+}

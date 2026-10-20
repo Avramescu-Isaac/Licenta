@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Verifică-ți Emailul" xml:space="preserve">
+    <value>Verify Your Email</value>
+  </data>
+  <data name="Expirat!" xml:space="preserve">
+    <value>Expired!</value>
+  </data>
+  <data name="Te rugăm să introduci toate cele 6 cifre." xml:space="preserve">
+    <value>Please enter all 6 digits.</value>
+  </data>
+  <data name="Se verifică..." xml:space="preserve">
+    <value>Verifying...</value>
+  </data>
+  <data name="Funcționalitate de retrimitere - implementează logica aici." xml:space="preserve">
+    <value>Resend functionality - implement your logic here.</value>
+  </data>
+  <data name="Am trimis un cod de verificare din 6 cifre pe emailul tău." xml:space="preserve">
+    <value>We've sent a 6-digit verification code to your email.</value>
+  </data>
+  <data name="Introdu-l mai jos pentru a-ți verifica contul." xml:space="preserve">
+    <value>Enter it below to verify your account.</value>
+  </data>
+  <data name="Verifică Emailul" xml:space="preserve">
+    <value>Verify Email</value>
+  </data>
+  <data name="Nu ai primit codul?" xml:space="preserve">
+    <value>Didn't receive the code?</value>
+  </data>
+  <data name="Retrimite codul" xml:space="preserve">
+    <value>Resend code</value>
+  </data>
+  <data name="Codul expiră în:" xml:space="preserve">
+    <value>Code expires in:</value>
+  </data>
+</root>
