@@ -1,0 +1,131 @@
+\chapter{Modelarea bazei de date și arhitectura sistemului}
+
+\section{Introducere}
+
+Aici arăt cum arată baza de date din spatele aplicației: ce entități am definit,
+cum se leagă între ele și cum am împărțit codul pe module.
+
+\section{Modelarea bazei de date}
+
+Baza de date este construită pe un model relațional~\cite{elmasri-navathe},
+gestionat prin Entity Framework Core. Pe lângă entitățile proprii aplicației, schema
+include și tabelele standard generate de \emph{ASP.NET Identity}
+(\texttt{AspNetUsers}, \texttt{AspNetRoles} etc.), entitatea \texttt{ApplicationUser}
+extinzând clasa \texttt{IdentityUser}.
+
+\subsection{Entități principale}
+
+Denumirile claselor păstrează terminologia engleză folosită la implementare
+(\texttt{Topic} pentru materie, \texttt{HireRequest} pentru cererea de colaborare),
+în timp ce textul lucrării și interfața folosesc termenii românești.
+
+\begin{description}
+    \item[ApplicationUser] reprezintă un cont de utilizator; extinde \texttt{IdentityUser}
+    cu câmpurile \texttt{Bio}, \texttt{Role} (\texttt{"Teach"} sau \texttt{"Learn"}),
+    \texttt{EducationLevel}, \texttt{TeachingLevel}, \texttt{Age}, \texttt{Gender},
+    \texttt{SelectedTopics} (identificatorii materiilor alese, separați prin virgulă),
+    \texttt{AvatarPath} și \texttt{BannedUntil} (data până la care contul e blocat).
+    \item[Message] reprezintă un mesaj din conversația dintre doi utilizatori: conține
+    \texttt{SenderId}, \texttt{ReceiverId}, \texttt{Content}, \texttt{Timestamp},
+    \texttt{IsRead}, precum și câmpurile opționale \texttt{FilePath}, \texttt{FileName}
+    și \texttt{FileSize}, populate atunci când mesajul conține un fișier atașat.
+    \item[HireRequest] reprezintă o cerere de colaborare trimisă de un elev unui profesor:
+    conține \texttt{RequesterId}, \texttt{TargetId}, \texttt{IsAccepted} și
+    \texttt{RequestedAt}.
+    \item[Topic] reprezintă o materie (de exemplu, Matematică, Programare);
+    conține \texttt{Name} și \texttt{Description}.
+    \item[OtpCode] reprezintă un cod de unică folosință generat pentru verificarea
+    email-ului sau confirmarea unei modificări sensibile a profilului; conține
+    \texttt{UserId}, \texttt{Code} și \texttt{ExpirationTime}.
+\end{description}
+
+\subsection{Relații importante}
+
+Figura~\ref{fig:er-diagram} prezintă relațiile principale dintre entități.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+    box/.style={draw, rectangle, rounded corners=2pt, minimum width=2.6cm, minimum height=0.8cm, align=center, font=\small},
+    >=Stealth
+]
+\node[box] (user) {ApplicationUser};
+\node[box, right=3.6cm of user, yshift=2.4cm] (message) {Message};
+\node[box, right=3.6cm of user, yshift=0.8cm] (hire) {HireRequest};
+\node[box, right=3.6cm of user, yshift=-0.8cm] (otp) {OtpCode};
+\node[box, right=3.6cm of user, yshift=-2.4cm] (topic) {Topic};
+\node[box, above=1.8cm of user] (role) {AspNetRoles};
+
+\draw[->] (user) -- (message) node[midway, above, sloped, font=\tiny] {1..n (Sender / Receiver)};
+\draw[->] (user) -- (hire) node[midway, above, sloped, font=\tiny] {1..n (Requester / Target)};
+\draw[->] (user) -- (otp) node[midway, above, sloped, font=\tiny] {1..n};
+\draw[->] (user) -- (topic) node[midway, above, sloped, font=\tiny] {n..n (la nivel de aplicație)};
+\draw[->] (user) -- (role) node[midway, right, font=\tiny] {n..n};
+\end{tikzpicture}
+\caption{Diagrama entitate-relație simplificată a bazei de date CourseHub}
+\label{fig:er-diagram}
+\end{figure}
+
+Un utilizator (\texttt{ApplicationUser}) poate fi atât expeditor, cât și destinatar al
+mai multor mesaje, atât solicitant (elev), cât și țintă (profesor) a mai multor cereri
+de colaborare, și poate avea mai multe coduri OTP și roluri asociate. Dintre acestea,
+doar legătura cu \texttt{HireRequest} este materializată printr-o cheie externă
+propriu-zisă; relația cu \texttt{OtpCode} este menținută la nivel de aplicație, prin
+câmpul \texttt{UserId}.
+
+Relația dintre \texttt{ApplicationUser} și \texttt{Topic} este, de asemenea, implementată
+intenționat la nivel de aplicație, prin lista de identificatori din \texttt{SelectedTopics},
+și nu printr-o tabelă de legătură: un utilizator poate selecta cel mult trei materii, iar
+operațiile necesare sunt suficient de simple pentru a nu justifica o entitate suplimentară.
+
+\section{Arhitectura logică a sistemului}
+
+CourseHub este structurată modular, fiecare controller acoperind o arie de
+responsabilitate clară:
+
+\begin{itemize}
+    \item \textbf{Identity (Areas/Identity)}: înregistrare, autentificare, verificare OTP,
+    resetarea parolei, gestionarea profilului propriu (\texttt{Manage});
+    \item \textbf{SearchController}: căutarea și filtrarea utilizatorilor;
+    \item \textbf{HireController}: trimiterea, acceptarea, anularea cererilor de colaborare;
+    \item \textbf{ConnectionsController}: afișarea listei de colaborări active (elevi, respectiv
+    profesori, în funcție de rol);
+    \item \textbf{ChatController} și \textbf{ChatHub}: afișarea istoricului unei conversații
+    și, respectiv, livrarea mesajelor în timp real prin SignalR;
+    \item \textbf{MessagesController}: lista mesajelor primite, cu conversațiile recente ale utilizatorului;
+    \item \textbf{AdminController}: panoul de administrare (utilizatori, roluri, blocări,
+    materii, moderarea mesajelor).
+\end{itemize}
+
+Figura~\ref{fig:arhitectura} ilustrează fluxul general al unei cereri prin sistem.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+    box/.style={draw, rectangle, minimum width=3.4cm, minimum height=0.9cm, align=center, font=\small},
+    >=Stealth
+]
+\node[box] (browser) {Interfață web\\(Razor Views, JS)};
+\node[box, below=1.2cm of browser] (mvc) {ASP.NET Core\\(Controllere, Servicii)};
+\node[box, below left=1.2cm and 2.2cm of mvc] (db) {SQL Server\\(Entity Framework Core)};
+\node[box, below right=1.2cm and 2.2cm of mvc] (hub) {SignalR Hub\\(ChatHub)};
+
+\draw[->] (browser) -- (mvc) node[midway, right, font=\tiny] {HTTP(S)};
+\draw[->] (mvc) -- (db) node[midway, left, font=\tiny] {EF Core};
+\draw[<->] (browser) -- (hub) node[midway, right, font=\tiny] {WebSocket};
+\draw[->] (hub) -- (mvc) node[midway, below, font=\tiny] {};
+\end{tikzpicture}
+\caption{Arhitectura logică a platformei CourseHub}
+\label{fig:arhitectura}
+\end{figure}
+
+\subsection{Fluxuri funcționale principale}
+
+Parcursul unui utilizator leagă modulele de mai sus într-un singur lanț: se
+înregistrează printr-un formular protejat de reCAPTCHA și își confirmă contul cu
+un cod OTP, parcurge apoi fluxul de trei pași prin care își definește rolul,
+detaliile și materiile de interes, caută un partener potrivit și îi trimite o
+cerere de colaborare, iar din momentul acceptării cei doi comunică prin chat în
+timp real, profesorul putând atașa suplimentar fișiere. În paralel,
+administratorul gestionează conturile, rolurile, blocările și materiile
+disponibile pe platformă.

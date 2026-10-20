@@ -1,0 +1,239 @@
+% Sablon pentru realizarea lucrarii de licenta, conform cu recomandarile
+% din ghidul de redactare:
+% - https://fmi.unibuc.ro/finalizare-studii/
+% - https://drive.google.com/file/d/1xj9kZZgTkcKMJkMLRuoYRgLQ1O8CX0mv/view
+
+% Multumiri lui Gabriel Majeri, acest sablon a fost creat pe baza
+% codului sursa a lucrarii sale de licenta.
+% Codul sursa: https://github.com/GabrielMajeri/bachelors-thesis
+% Website: https://www.gabrielmajeri.ro/
+%
+% Aceast sablon este licentiat sub Creative Commons Attribution 4.0 International License.
+
+\documentclass[12pt, a4paper]{report}
+
+% Suport pentru diacritice și alte simboluri
+\usepackage{fontspec}
+
+% Suport pentru mai multe limbi
+\usepackage{polyglossia}
+
+% Setează limba textului la română
+\setdefaultlanguage{romanian}
+% Am nevoie de engleză pentru rezumat
+\setotherlanguages{english}
+
+% Indentează și primul paragraf al fiecărei noi secțiuni
+\SetLanguageKeys{romanian}{indentfirst=true}
+
+% ====== Despărțirea în silabe la capăt de rând ======
+% Documentul nu desparte niciun cuvânt la capăt de rând (fără „admi-nistrator”
+% rupt pe două rânduri). Penalizarea maximă pentru cratimă face ca TeX să prefere
+% întotdeauna o spațiere ceva mai largă în locul unei despărțiri, iar
+% `emergencystretch` îi dă spațiul suplimentar de care are nevoie ca să nu rezulte
+% rânduri care depășesc marginea din dreapta.
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\tolerance=9999
+\emergencystretch=3em
+
+% Suport pentru diferite stiluri de ghilimele
+\usepackage{csquotes}
+
+\DeclareQuoteStyle{romanian}
+  {\quotedblbase}
+  {\textquotedblright}
+  {\guillemotleft}
+  {\guillemotright}
+
+% Utilizează biblatex pentru referințe bibliografice
+% `isbn`/`doi` sunt cerute explicit: elementul de identificare al unei cărți
+% (ISBN) și, respectiv, al unui document digital (DOI) trebuie să apară tipărit
+% în bibliografie, nu doar să existe în fișierul .bib.
+\usepackage[
+    maxbibnames=50,
+    sorting=nty,
+    isbn=true,
+    doi=true,
+    url=true
+]{biblatex}
+
+\addbibresource{bibliography.bib}
+
+% Setează spațiere inter-linie la 1.5
+\usepackage{setspace}
+\onehalfspacing
+
+% Modificarea geometriei paginii
+\usepackage{geometry}
+
+% Include funcțiile de grafică
+\usepackage{graphicx}
+% Încarcă imaginile din directorul `images`
+\graphicspath{{./images/}}
+
+% Permite inserarea unor pagini dintr-un fișier PDF extern (folosit pentru anexă)
+\usepackage{pdfpages}
+
+% Diagrame desenate direct în LaTeX (ER, arhitectură)
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric}
+
+% Listări de cod
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Stil pentru listările de cod C#
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\definecolor{codekeyword}{rgb}{0.13,0.29,0.53}
+\definecolor{codecomment}{rgb}{0.0,0.5,0.0}
+\definecolor{codestring}{rgb}{0.64,0.08,0.08}
+
+\lstdefinestyle{csharpstyle}{
+    language=[Sharp]C,
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{codekeyword}\bfseries,
+    commentstyle=\color{codecomment}\itshape,
+    stringstyle=\color{codestring},
+    % `columns=fullflexible` + `keepspaces` lasă fiecare caracter la lățimea lui
+    % naturală, în loc să-l alinieze pe un caiet de pătrățele: fără această
+    % pereche de opțiuni, listările capătă spații parazite în interiorul
+    % identificatorilor și al șirurilor de caractere (de exemplu, un URL apare
+    % rupt în bucăți: „www . google .com / api”).
+    columns=fullflexible,
+    keepspaces=true,
+    % Liniile din listări sunt deja scrise suficient de scurt cât să încapă în
+    % lățimea paginii. Opțiunile de mai jos rămân ca plasă de siguranță: dacă o
+    % linie depășește totuși marginea, este ruptă (oriunde, nu doar la spațiu) și
+    % continuarea ei este marcată vizibil cu o săgeată.
+    breaklines=true,
+    breakatwhitespace=false,
+    breakindent=2em,
+    postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
+    captionpos=b,
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    frame=single,
+    framesep=4pt,
+    rulecolor=\color{gray!40},
+    tabsize=4,
+    xleftmargin=12pt
+}
+
+\lstset{style=csharpstyle}
+
+% Linkuri interactive în PDF
+\usepackage[
+    colorlinks,
+    linkcolor={black},
+    menucolor={black},
+    citecolor={black},
+    urlcolor={blue}
+]{hyperref}
+
+% Comenzi matematice
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+% Formule matematice
+% (definite folosind comenzi standard amsmath/mathtools, nu unicode-math -
+% pachetul unicode-math este unul dintre cele mai costisitoare la compilare
+% în combinație cu fontspec/polyglossia, iar teza nu conține notație
+% matematică ce ar necesita simbolurile Unicode suplimentare oferite de el)
+\newcommand{\bigO}[1]{\mathcal{O}\left(#1\right)}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+% Spațiere mai compactă pentru liste (itemize/enumerate) și pentru titlurile
+% de secțiune - reduce numărul de pagini aproape goale rămase la finalul unui
+% capitol, fără a modifica vizibil aspectul general al documentului.
+\usepackage{enumitem}
+\setlist{itemsep=0.15em, parsep=0pt, topsep=0.4em}
+
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{1.4em plus .2em minus .2em}{0.6em plus .1em}
+\titlespacing*{\subsection}{0pt}{1.2em plus .2em minus .2em}{0.5em plus .1em}
+
+% Titlurile de secțiune păstrează formatul implicit al clasei `report`, dar sunt
+% aliniate la stânga: un titlu lung se mută integral pe rândul următor, în loc să
+% fie despărțit prin cratimă sau întins pe toată lățimea paginii.
+\titleformat{\section}{\normalfont\Large\bfseries\raggedright}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\raggedright}{\thesubsection}{1em}{}
+
+% Suport pentru rezumat în două limbi
+% Bazat pe https://tex.stackexchange.com/a/70818
+\newenvironment{abstractpage}
+  {\cleardoublepage\vspace*{\fill}\thispagestyle{empty}}
+  {\vfill\cleardoublepage}
+
+\renewenvironment{abstract}[1]
+  {\bigskip\selectlanguage{#1}%
+   \begin{center}\bfseries\abstractname\end{center}}
+  {\par\bigskip}
+
+% Suport pentru anexe
+\usepackage{appendix}
+
+% Stiluri diferite de headere și footere
+\usepackage{fancyhdr}
+
+% Metadate
+\title{CourseHub -- Platformă web pentru conectarea profesorilor cu elevii}
+\author{Avramescu Isaac Sebastian}
+
+% Generează variabilele cu @
+\makeatletter
+
+\begin{document}
+
+% Front matter
+\cleardoublepage
+\let\ps@plain
+
+% Pagina de titlu
+\include{0-title}
+
+\restoregeometry
+
+\newgeometry{
+    margin=2.5cm
+}
+
+\fancypagestyle{main}{
+  \fancyhf{}
+  \renewcommand\headrulewidth{0pt}
+  \fancyhead[C]{}
+  \fancyfoot[C]{\thepage}
+}
+
+\addtocounter{page}{1}
+
+% Rezumatul
+\include{0-abstract}
+
+\tableofcontents
+
+% Main matter
+\cleardoublepage
+\pagestyle{main}
+\let\ps@plain\ps@main
+
+\include{1-introducere}
+\include{2-analiza}
+\include{3-tehnologii}
+\include{4-arhitectura}
+\include{5-implementare}
+\include{6-securitate}
+\include{7-testare}
+\include{8-concluzii}
+
+\printbibliography[heading=bibintoc]
+
+% Anexa de la finalul lucrării. Cât timp ambele variante din fișier sunt
+% comentate, nu se adaugă nicio pagină. Se folosește `\input`, nu `\include`,
+% tocmai ca un fișier gol să nu producă o pagină albă.
+\input{9-anexa}
+
+\end{document}

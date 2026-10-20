@@ -1,0 +1,38 @@
+\chapter{Concluzii și direcții de dezvoltare}
+
+În lucrarea asta am proiectat și am construit CourseHub, o aplicație web pe
+ASP.NET Core 8 prin care profesorii și elevii se găsesc și lucrează împreună.
+Aplicația acoperă tot drumul unui utilizator: se înregistrează și își confirmă
+contul prin OTP, își completează profilul, caută pe cineva potrivit, trimite o
+cerere de colaborare și, după ce e acceptată, discută prin chat în timp real și
+își trimit fișiere. În spate există un sistem real de roluri Identity, peste care
+am construit panoul de administrare, iar toată interfața merge în română și în
+engleză.
+
+Sunt și lucruri pe care nu am apucat să le fac. Aplicația rulează pe o bază de
+date locală, nu am publicat-o în cloud. Notificările de mesaje noi se iau prin
+interogare periodică (\emph{polling}), nu instantaneu, iar un fișier trimis în
+conversație se vede la celălalt abia după ce dă refresh. Nu am scris teste
+automate. Iar dacă blochez un cont care e deja autentificat, sesiunea lui rămâne
+activă până iese singur.
+
+Dacă aș continua proiectul, aș lua-o în ordinea asta:
+
+\begin{itemize}
+    \item introducerea unei suite de teste automate, pentru a reduce riscul de
+    regresie pe măsură ce platforma crește;
+    \item invalidarea imediată a sesiunilor active la blocarea unui cont;
+    \item extinderea livrării în timp real prin SignalR și pentru mesajele cu
+    fișiere atașate, eliminând reîncărcarea paginii;
+    \item publicarea platformei într-un mediu cloud, cu o bază de date gestionată
+    și integrare continuă;
+    \item organizarea materialelor partajate prin conversații într-o bibliotecă
+    per colaborare;
+    \item introducerea unui sistem de recomandare a partenerilor potriviți, bazat
+    pe materiile de interes și pe istoricul colaborărilor.
+\end{itemize}
+
+În concluzie, CourseHub demonstrează fezabilitatea unei platforme dedicate
+conectării profesorilor cu elevii, cu un accent particular pe securitate --
+autorizare aplicată consecvent la nivel de server, validare riguroasă a
+conținutului încărcat și moderare funcțională.

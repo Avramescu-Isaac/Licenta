@@ -1,0 +1,76 @@
+\chapter{Testare}
+
+\section{Introducere}
+
+Am testat aplicația manual, pe măsură ce am scris-o, mergând pe scenarii.
+Problema e că multe fluxuri au nevoie de mai mulți utilizatori: nu poți testa
+căutarea, cererile de colaborare sau o conversație cu un singur cont. Ca să nu
+înregistrez de fiecare dată zeci de conturi și să trec prin OTP pentru fiecare,
+am scris un serviciu care îmi generează datele de test la pornire.
+
+\section{Generarea datelor de test}
+
+Serviciul rulează doar când mediul de execuție este \texttt{Development}, ca să
+nu ajungă niciodată pe un server real. La pornire creează conturi de profesori și
+elevi cu profilul completat: vârstă, gen, nivel, materii. Nu scriu conturile
+direct în baza de date, ci le trec prin \texttt{UserManager}, ca parolele să fie
+procesate de \texttt{PasswordHasher} și rolurile Identity să fie atribuite corect
+-- altfel conturile de test s-ar comporta diferit de cele reale, iar testul n-ar
+mai însemna nimic. Adaug și câteva cereri de colaborare acceptate, cu conversații
+între ele.
+
+Înainte să creeze un cont, serviciul verifică după email dacă există deja. Așa pot
+porni aplicația de câte ori vreau fără să se dubleze nimic.
+
+\section{Scenarii testate manual}
+
+\begin{itemize}
+    \item \textbf{Înregistrare și verificare}: date valide, cod OTP corect și
+    incorect, expirarea codului, formular trimis fără reCAPTCHA;
+    \item \textbf{Completarea profilului}: cei trei pași pentru ambele roluri,
+    revenirea la un pas anterior cu păstrarea datelor introduse;
+    \item \textbf{Căutare și filtrare}: filtrare după nume, rol, nivel și materie,
+    izolat și combinat, precum și excluderea conturilor de administrator din
+    rezultate;
+    \item \textbf{Cereri de colaborare}: trimitere, acceptare, respingere, anulare,
+    precum și încercarea unei a doua cereri către același profesor;
+    \item \textbf{Mesagerie}: livrare instantanee a unui mesaj text, trimiterea
+    unui fișier de către un cont cu rol de profesor și verificarea faptului că
+    un elev nu are acces la această funcționalitate, inclusiv prin apelarea
+    directă a endpoint-ului API, ocolind interfața;
+    \item \textbf{Panou de administrare}: promovarea și retrogradarea unui
+    administrator, imposibilitatea unui administrator de a se bloca sau șterge
+    pe sine, blocarea temporară și permanentă, precum și verificarea faptului că
+    un cont blocat nu se mai poate autentifica;
+    \item \textbf{Localizare}: comutarea între română și engleză pe fiecare
+    pagină, cu păstrarea limbii alese între navigări succesive.
+\end{itemize}
+
+\section{Depanarea unor probleme identificate prin testare}
+
+Testând iar și iar aceleași fluxuri am dat peste trei probleme pe care nu le
+văzusem scriind codul:
+
+\begin{itemize}
+    \item la primul pas al fluxului de completare a profilului, rolul ales
+    (\texttt{Wizard.Role}) nu era transmis prin formular la pasul al doilea,
+    fiind folosit doar ca să decid ce câmpuri arăt pe ecran. Așa că la salvare
+    aplicația scria mereu în nivelul de predare, oricare ar fi fost rolul ales.
+    Am rezolvat punând un câmp ascuns care duce rolul mai departe, de la un pas
+    la altul;
+    \item controllerul responsabil de afișarea listei de colaborări nu era
+    protejat cu \texttt{[Authorize]}, cum erau toate celelalte. Dacă intrai pe
+    pagină fără să fii autentificat, primeai o eroare în loc să fii trimis la
+    pagina de autentificare. Am adăugat atributul care lipsea;
+    \item am încercat să intru pe pagini scriind adresa direct în browser, nu
+    apăsând butoanele. Așa am văzut că puteam deschide o conversație cu orice
+    cont, doar punându-i identificatorul în URL, chiar dacă nu aveam nicio
+    colaborare cu el. Din interfață nu ajungi acolo decât din lista de
+    colaborări, dar asta nu e o protecție. Am mutat verificarea pe server, și
+    pentru afișarea istoricului, și pentru cele două endpoint-uri prin care se
+    scrie un mesaj.
+\end{itemize}
+
+Toate trei au ieșit la iveală abia când am încercat aplicația din poziția altui
+rol decât cel la care mă gândisem când scriam codul, sau când am ocolit
+interfața.

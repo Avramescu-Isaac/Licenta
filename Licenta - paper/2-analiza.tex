@@ -1,0 +1,70 @@
+\chapter{Analiza cerințelor}
+
+\section{Introducere}
+
+Înainte să încep să scriu cod, a trebuit să stabilesc cine folosește platforma și
+ce trebuie să poată face fiecare. În capitolul ăsta trec prin tipurile de
+utilizatori și prin cerințele care au ieșit din problema descrisă mai devreme.
+
+\section{Actorii sistemului}
+
+Platforma distinge patru tipuri de actori, ultimele trei reprezentate tehnic prin
+roluri reale din \emph{ASP.NET Identity}: \textbf{Vizitator} (persoană
+neautentificată, poate accesa pagina principală, se poate înregistra sau
+autentifica), \textbf{Elev} (rol \texttt{Learn}, caută un profesor, trimite cereri
+de colaborare, comunică prin chat cu profesorii cu care colaborează),
+\textbf{Profesor} (rol \texttt{Teach}, poate fi găsit de elevi, acceptă sau
+respinge cereri de colaborare, poate trimite fișiere elevilor cu care
+colaborează) și \textbf{Administrator} (rol \texttt{Admin}, gestionează conturile,
+blocările și materiile disponibile, moderează mesajele).
+
+Fiecare cont primește, în plus, rolul implicit \texttt{User} la înregistrare.
+Acesta nu influențează nicio funcționalitate vizibilă -- există exclusiv pentru
+vizibilitate administrativă, ca un administrator să poată confirma din tabela de
+roluri că un cont este un membru înregistrat obișnuit.
+
+\section{Cerințe funcționale}
+
+\begin{itemize}
+    \item Înregistrare cu nume de utilizator, email și parolă; contul rămâne
+    neconfirmat până la introducerea corectă a unui cod OTP trimis pe email.
+    \item După confirmare, utilizatorul parcurge un flux de completare a profilului
+    în trei pași: alegerea rolului, detaliile specifice rolului (vârstă, gen, nivel
+    de studii/experiență) și selectarea a până la trei materii de interes.
+    \item Căutarea altor utilizatori după nume, rol, nivel și materie.
+    \item Trimiterea unei cereri de colaborare de la elev către profesor; acceptare,
+    respingere sau anulare (cât timp e în așteptare) a cererii.
+    \item Comunicare prin chat în timp real între utilizatorii care colaborează, cu
+    posibilitatea profesorului de a atașa fișiere (documente, imagini, prezentări)
+    conversației, și un indicator de mesaje necitite în bara de navigare.
+    \item Editarea profilului propriu (biografie, avatar, materii, nivel); modificările
+    sensibile (nume de utilizator, email) necesită reconfirmare prin cod OTP.
+    \item Administrare: promovare/retrogradare a rolului de administrator, blocare
+    temporară (1 zi, 7 zile, 1 lună) sau permanentă, ștergere de cont, gestionarea
+    materiilor disponibile.
+\end{itemize}
+
+\section{Cerințe nefuncționale}
+
+\begin{itemize}
+    \item \textbf{Securitate}: parolele nu sunt stocate în clar (gestionate de
+    ASP.NET Identity ca \emph{hash}); fișierele încărcate sunt validate după
+    extensie și dimensiune; acțiunile administrative sunt restricționate exclusiv
+    rolului \texttt{Admin}, verificat de framework, nu doar ascuns din interfață;
+    toate cererile care modifică starea aplicației sunt însoțite de un token
+    antiforgery validat pe server.
+    \item \textbf{Localizare}: interfața este disponibilă integral în română și
+    engleză, comutabilă fără reîncărcare manuală și fără autentificare.
+    \item \textbf{Utilizabilitate}: interfața este responsivă și accesibilă atât
+    pe desktop, cât și pe dispozitive mobile.
+    \item \textbf{Extensibilitate}: arhitectura modulară (controllere separate
+    pentru căutare, colaborări, cereri, chat, administrare) permite adăugarea de
+    noi funcționalități fără a afecta modulele existente.
+    \item \textbf{Fiabilitate}: acțiunile ireversibile (ștergere, blocare
+    permanentă) sunt limitate prin verificări explicite -- un administrator nu
+    își poate șterge sau bloca propriul cont, iar niciun administrator nu poate
+    fi blocat sau șters de altul.
+    \item \textbf{Mentenabilitate}: evoluția schemei bazei de date este gestionată
+    exclusiv prin migrații Entity Framework Core, trasabile și reproductibile pe
+    orice mediu nou.
+\end{itemize}

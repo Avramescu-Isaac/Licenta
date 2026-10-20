@@ -1,0 +1,85 @@
+\chapter{Tehnologii și instrumente utilizate}
+
+\section{Introducere}
+
+Platforma CourseHub a fost construită folosind ecosistemul .NET, în jurul
+framework-ului \emph{ASP.NET Core 8}. Această secțiune prezintă principalele
+tehnologii folosite și motivele pentru care au fost alese.
+
+\section{ASP.NET Core 8 și Entity Framework Core}
+
+ASP.NET Core este un framework \emph{cross-platform} și \emph{open-source},
+dezvoltat de Microsoft, dedicat construirii de aplicații web și servicii
+API~\cite{aspnetcore-docs}. Aplicația CourseHub folosește
+modelul \emph{MVC} (\emph{Model-View-Controller}), un tipar arhitectural propus
+inițial pentru interfețe grafice și adaptat ulterior aplicațiilor
+web, pentru partea principală a aplicației și \emph{Razor Pages} pentru fluxurile
+legate de autentificare (\texttt{Areas/Identity}), respectând convenția folosită
+de șabloanele oficiale ale platformei Identity. Structura proiectului urmează
+organizarea standard \texttt{Models}/\texttt{Controllers}/\texttt{Views},
+completată de un director \texttt{Services} pentru componente reutilizabile
+(email, verificarea reCAPTCHA, curățarea codurilor OTP expirate). Limbajul
+folosit este C\#~\cite{csharp-docs}.
+
+Persistența datelor este realizată prin \emph{Entity Framework Core}, ORM-ul
+oficial pentru .NET~\cite{efcore-docs}. Toate entitățile platformei
+(\texttt{ApplicationUser}, \texttt{Message}, \texttt{HireRequest}, \texttt{Topic},
+\texttt{OtpCode}) sunt mapate pe o bază de date \emph{SQL Server}~\cite{sqlserver-docs},
+iar evoluția schemei este gestionată exclusiv prin \emph{migrații}: fiecare
+modificare a modelului de date este însoțită de o migrație dedicată, aplicată
+prin comanda \texttt{Update-Database}.
+
+\section{ASP.NET Identity și sistemul de roluri}
+
+Autentificarea și gestionarea utilizatorilor sunt realizate prin \emph{ASP.NET
+Identity}~\cite{identity-docs}, extins cu suport pentru roluri reale
+(\texttt{RoleManager<IdentityRole>})~\cite{identity-roles-docs}: \texttt{User}
+(atribuit automat oricărui cont), \texttt{Teach}, \texttt{Learn} și \texttt{Admin}.
+Rolurile \texttt{Teach}/\texttt{Learn} sunt menținute sincronizat atât în câmpul
+\texttt{Role} al entității \texttt{ApplicationUser} (folosit de restul aplicației
+pentru afișare și filtrare), cât și în tabela reală \texttt{AspNetRoles}, ceea ce
+permite verificări stricte de tipul \texttt{[Authorize(Roles = "Admin")]} pentru
+panoul de administrare.
+
+\section{SignalR -- comunicare în timp real}
+
+Chat-ul dintre profesor și elev este implementat cu \emph{SignalR}, biblioteca
+oficială pentru comunicare bidirecțională în timp real peste
+\emph{WebSockets}~\cite{signalr-docs, websocket-rfc}, cu \emph{fallback} automat
+la alte transporturi când este necesar. \texttt{ChatHub} expune metoda
+\texttt{SendMessage}, apelată de client prin conexiunea SignalR, care
+redirecționează mesajul instantaneu către destinatar, în paralel cu persistarea
+acestuia printr-un apel API separat, ale cărui endpoint-uri urmează principiile
+arhitecturale REST~\cite{fielding-rest}.
+
+\section{reCAPTCHA}
+
+Formularul de înregistrare este protejat împotriva înregistrărilor automate
+(\emph{bot}) prin \emph{Google reCAPTCHA v2}~\cite{recaptcha-docs}. Verificarea
+token-ului trimis de client este realizată exclusiv pe server, printr-un apel
+către serviciul \texttt{siteverify} al Google, înainte ca un cont nou să fie
+creat efectiv.
+
+\section{Localizare}
+
+Interfața este disponibilă integral în română și engleză, folosind sistemul
+nativ de localizare din ASP.NET Core (\texttt{IStringLocalizer},
+\texttt{IViewLocalizer} și fișiere de resurse \texttt{.resx})~\cite{localization-docs}.
+Limba română este cea implicită; comutarea se face printr-un \emph{cookie}
+setat de un controller dedicat, fără reîncărcare manuală și fără autentificare.
+
+\section{Alte tehnologii și instrumente}
+
+\begin{itemize}
+    \item \textbf{SMTP} pentru codurile OTP și notificările prin email;
+    \item \textbf{Bootstrap 5}~\cite{bootstrap-docs}, peste care a fost construit
+    un sistem propriu de stiluri (culori, carduri, animații);
+    \item \textbf{Git}~\cite{git-docs} și \textbf{Visual Studio} pentru controlul
+    versiunilor, dezvoltare și depanare;
+    \item \textbf{SQL Server LocalDB} ca sistem de gestiune a bazei de date în
+    mediul de dezvoltare;
+    \item \textbf{Postman}, pentru testarea manuală a endpoint-urilor API (de
+    exemplu \texttt{/api/messages/upload-file}), independent de formular;
+    \item \textbf{LaTeX} (XeLaTeX), pentru redactarea prezentei lucrări, necesar
+    pentru suportul diacriticelor prin \texttt{fontspec} și \texttt{polyglossia}.
+\end{itemize}

@@ -1,0 +1,149 @@
+\chapter{Implementarea funcționalităților majore}
+
+\section{Introducere}
+
+Acest capitol detaliază implementarea principalelor funcționalități ale platformei
+CourseHub: gestionarea conturilor și autentificarea, fluxul de completare a
+profilului, căutarea și sistemul de cereri de colaborare, mesageria în timp real cu
+partajare de fișiere, panoul de administrare și sistemul de localizare.
+
+\section{Gestionarea utilizatorilor}
+
+Entitatea \texttt{ApplicationUser} extinde clasa \texttt{IdentityUser} din
+ASP.NET Identity cu proprietăți specifice domeniului:
+
+\begin{lstlisting}[caption={Extinderea entității de utilizator (fragment)}]
+public class ApplicationUser : IdentityUser
+{
+    public string? Bio { get; set; }
+    public string? Role { get; set; }
+    public string? EducationLevel { get; set; }
+    public string? TeachingLevel { get; set; }
+    public int? Age { get; set; }
+    public string? Gender { get; set; }
+    public string? SelectedTopics { get; set; }
+    public string? AvatarPath { get; set; }
+    public DateTime? BannedUntil { get; set; }
+}
+\end{lstlisting}
+
+Câmpul \texttt{BannedUntil} ilustrează o decizie de proiectare deliberată: în loc
+de un câmp boolean separat (\texttt{IsBanned}), o singură dată nullable acoperă
+toate cazurile -- \texttt{null} înseamnă cont neblocat, o dată din viitor înseamnă
+blocare temporară, iar \texttt{DateTime.MaxValue} este folosit convențional pentru
+blocare permanentă. Verificarea „este blocat” se reduce, în orice context, la o
+singură comparație: \texttt{BannedUntil > DateTime.UtcNow}.
+
+\section{Autentificarea și verificarea prin OTP}
+
+Înregistrarea unui cont nou nu autentifică imediat utilizatorul. După crearea
+contului, se generează un cod numeric de 6 cifre, stocat împreună cu un termen de
+expirare în tabela \texttt{OtpCode}, iar codul este trimis pe adresa de email
+indicată. Contul rămâne neconfirmat (\texttt{EmailConfirmed = false}) până la
+introducerea corectă a codului pe pagina dedicată de verificare. Același mecanism
+este reutilizat pentru confirmarea modificărilor sensibile ale profilului
+(schimbarea numelui de utilizator sau a adresei de email).
+
+\section{Fluxul de completare a profilului}
+
+Imediat după confirmarea contului, utilizatorul este direcționat către un flux de
+completare a profilului, organizat în trei pași: alegerea rolului, completarea
+detaliilor specifice rolului ales și selectarea materiilor de interes. O atenție
+particulară a fost acordată transmiterii corecte a rolului între pași -- valoarea
+aleasă la primul pas trebuie păstrată într-un câmp ascuns al formularului, altfel
+serverul nu ar putea decide dacă trebuie salvat nivelul de educație sau nivelul de
+predare. La finalul primului pas, rolul ales este scris atât în câmpul
+\texttt{Role} al utilizatorului, cât și în tabela reală de roluri Identity:
+
+\begin{lstlisting}[caption={Sincronizarea rolului domeniu cu rolul Identity}]
+user.Role = Wizard.Role;
+await _userManager.UpdateAsync(user);
+
+var otherRole = Wizard.Role == "Teach" ? "Learn" : "Teach";
+if (await _userManager.IsInRoleAsync(user, otherRole))
+    await _userManager.RemoveFromRoleAsync(user, otherRole);
+if (!await _userManager.IsInRoleAsync(user, Wizard.Role))
+    await _userManager.AddToRoleAsync(user, Wizard.Role);
+\end{lstlisting}
+
+\section{Căutarea și sistemul de cereri de colaborare}
+
+Căutarea permite filtrarea utilizatorilor după nume, rol, nivel de experiență
+și materie, excluzând întotdeauna conturile cu rol de administrator din rezultate,
+indiferent de valoarea câmpului \texttt{Role} pe care acestea o au. Un elev poate
+trimite unei persoane cu rol de profesor o cerere de colaborare
+(\texttt{HireRequest}); profesorul o poate accepta sau respinge din pagina
+proprie de cereri, iar elevul poate vizualiza starea propriilor cereri trimise și
+le poate anula cât timp sunt în așteptare. Odată o cerere acceptată, cei doi
+utilizatori devin parteneri și pot iniția o conversație.
+
+\section{Mesageria în timp real și partajarea fișierelor}
+
+Comunicarea dintre utilizatori se realizează printr-un chat cu livrare
+instantanee, implementat cu SignalR. Hub-ul expune o singură metodă, apelată de
+client pentru a trimite un mesaj text:
+
+\begin{lstlisting}[caption={ChatHub -- livrarea mesajelor în timp real}]
+public class ChatHub : Hub
+{
+    public async Task SendMessage(
+        string senderId, string receiverId, string message)
+    {
+        await Clients.User(receiverId)
+            .SendAsync("ReceiveMessage", senderId, message);
+    }
+}
+\end{lstlisting}
+
+În paralel cu livrarea prin SignalR, clientul trimite mesajul și către un
+endpoint API dedicat, responsabil de persistarea acestuia în baza de date --
+separarea celor două căi permite ca istoricul conversației să rămână disponibil
+chiar dacă unul dintre utilizatori nu este conectat în momentul trimiterii.
+
+Profesorii pot, suplimentar, atașa fișiere conversației. Restricția este aplicată
+exclusiv pe server, nu doar prin ascunderea butonului de atașare din interfață
+pentru elevi: tipul fișierului este verificat printr-o listă albă de extensii,
+dimensiunea este limitată, iar numele fișierului salvat pe disc este generat
+aleator (\texttt{Guid.NewGuid}), pentru a preveni suprascrierea accidentală a
+unui fișier existent cu același nume.
+
+\section{Panoul de administrare}
+
+Panoul de administrare este restricționat prin atributul
+\texttt{[Authorize(Roles = "Admin")]}, aplicat la nivel de controller -- framework-ul
+respinge orice cerere provenită de la un utilizator neautorizat, înainte ca vreo
+linie de cod din interior să se execute.
+
+Administratorul poate promova sau retrograda alți utilizatori, poate șterge un
+cont (împreună cu toate mesajele, cererile de colaborare, codurile OTP și avatarul
+asociate) și poate bloca temporar sau permanent un cont:
+
+\begin{lstlisting}[caption={Aplicarea unei blocări (fragment din AdminController)}]
+switch (duration)
+{
+    case "1d": user.BannedUntil = DateTime.UtcNow.AddDays(1); break;
+    case "7d": user.BannedUntil = DateTime.UtcNow.AddDays(7); break;
+    case "1m": user.BannedUntil = DateTime.UtcNow.AddMonths(1); break;
+    case "permanent": user.BannedUntil = DateTime.MaxValue; break;
+    case "unban": user.BannedUntil = null; break;
+}
+\end{lstlisting}
+
+Un administrator nu se poate bloca sau șterge pe sine, iar niciun administrator
+nu poate fi blocat sau șters de un alt administrator, pentru a preveni pierderea
+accidentală a accesului la panoul de administrare. Pentru moderare, administratorul poate
+vizualiza, pentru orice utilizator, lista completă a mesajelor trimise de acesta.
+
+\section{Sistemul de localizare}
+
+Textele din interfață sunt extrase în fișiere de resurse (\texttt{.resx}),
+organizate în oglindă cu structura de directoare a vizualizărilor, iar textul
+românesc este folosit direct drept cheie de resursă:
+
+\begin{lstlisting}[caption={Exemplu de utilizare a localizării într-o vizualizare}]
+<h1>@Localizer["Panou de administrare"]</h1>
+\end{lstlisting}
+
+Limba activă este determinată printr-un \emph{cookie} setat de un controller
+dedicat, apelat la comutarea de limbă din bara de navigare; schimbarea limbii nu
+necesită autentificare și este păstrată între sesiuni.

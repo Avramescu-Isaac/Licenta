@@ -1,0 +1,77 @@
+\chapter{Introducere}
+
+\section{Motivație}
+
+Când un elev lucrează unu la unu cu un profesor potrivit lui, învață mult mai bine
+decât la clasă. Problema e cum îl găsește. De obicei totul se rezolvă prin
+cunoștințe: întrebi pe cineva, care întreabă pe altcineva, și așa mai departe. Iar
+un profesor care vrea să dea meditații n-are unde să își facă un profil, să fie
+găsit de elevi și să vorbească apoi cu ei într-un singur loc.
+
+Platformele generaliste de comunicare (rețele sociale, aplicații de mesagerie) nu oferă
+structura necesară unei relații profesor-elev: nu există un mod clar de a exprima ce
+predai sau ce vrei să înveți, nu există un sistem de conectare bazat pe cerere și acceptare,
+iar comunicarea și partajarea materialelor didactice se realizează ad-hoc, fără un istoric
+organizat pe fiecare colaborare. Există, așadar, o nevoie clară pentru o platformă dedicată,
+care să structureze întregul parcurs: de la crearea unui profil, la găsirea partenerului
+potrivit, la comunicarea propriu-zisă.
+
+\section{Context și preliminarii}
+
+Platformele educaționale existente se împart, în linii mari, în două categorii:
+platforme de cursuri înregistrate, fără interacțiune personalizată, și platforme de
+mediere între tutori și elevi, orientate comercial. Foarte puține pun accentul pe
+comunicarea directă, în timp real, odată ce colaborarea a fost stabilită, sau pe
+posibilitatea profesorului de a trimite un material de lucru chiar în conversația
+în care discută cu elevul.
+
+CourseHub este gândit ca o soluție dedicată acestei nevoi: nu un magazin de cursuri,
+ci un spațiu în care oricine se poate înregistra ca persoană care vrea să predea sau
+să învețe, poate căuta un partener după criterii clare (rol, nivel, materie), poate
+iniția o colaborare printr-un mecanism explicit de cerere și acceptare, iar apoi poate
+comunica prin chat în timp real, inclusiv prin partajarea de fișiere.
+
+\section{Obiectivele lucrării}
+
+Obiectivul principal al acestei lucrări este proiectarea și implementarea platformei
+CourseHub, folosind ASP.NET Core 8 și tehnologii moderne asociate ecosistemului
+.NET. Obiectivele specifice sunt:
+
+\begin{itemize}
+    \item construirea unui sistem de înregistrare securizat, cu verificare a adresei de
+    email printr-un cod de unică folosință (OTP) și protecție a formularului de
+    înregistrare printr-un mecanism de tip \emph{CAPTCHA};
+    \item implementarea unui flux de completare a profilului (\emph{wizard}) prin care
+    utilizatorul își alege rolul (profesor sau elev), detaliile relevante rolului ales
+    (nivel de experiență, respectiv nivel de studii) și materiile de interes;
+    \item dezvoltarea unui sistem de căutare și filtrare a utilizatorilor după rol, nivel
+    și materie;
+    \item construirea unui mecanism explicit de conectare, bazat pe cereri de colaborare
+    trimise de un elev unui profesor și acceptate sau respinse de acesta;
+    \item implementarea unui sistem de mesagerie în timp real, folosind SignalR,
+    cu suport pentru partajarea de fișiere de către profesori către elevii cu care
+    colaborează;
+    \item construirea unui sistem de roluri real, bazat pe \emph{ASP.NET Identity Roles},
+    și a unui panou de administrare care permite gestionarea utilizatorilor, a materiilor
+    disponibile pe platformă, precum și moderarea conținutului trimis prin chat;
+    \item realizarea unei interfețe complet localizate, disponibilă atât în limba română,
+    cât și în limba engleză.
+\end{itemize}
+
+\section{Contribuția personală}
+
+Toate componentele platformei CourseHub -- modelul de date, logica din controllere,
+interfața, autentificarea și verificarea prin OTP, sistemul de roluri, panoul de
+administrare, mesageria în timp real și localizarea -- au fost proiectate și
+implementate integral ca parte a acestei lucrări, cu accent pe corectitudinea
+fluxurilor de autorizare, pe validarea riguroasă a datelor introduse de utilizator
+și pe o experiență de utilizare coerentă în ambele limbi.
+
+\section{Structura lucrării}
+
+Capitolul 2 analizează cerințele funcționale și nefuncționale, împreună cu actorii
+implicați, iar capitolul 3 prezintă tehnologiile folosite. Capitolul 4 descrie
+modelarea bazei de date și arhitectura sistemului, capitolul 5 detaliază
+implementarea, capitolul 6 aspectele de securitate, iar capitolul 7 metodologia de
+testare. Capitolul 8 conține concluziile, limitările și direcțiile de dezvoltare
+ulterioară.

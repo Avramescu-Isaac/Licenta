@@ -1,0 +1,175 @@
+\chapter{Securitate}
+
+\section{Introducere}
+
+Securitatea nu e o funcționalitate pe care o adaugi la final, ci ceva ce trebuie
+avut în minte peste tot. De aceea, pentru fiecare formular, încărcare de fișier
+și acțiune de administrare m-am întrebat același lucru: ce s-ar întâmpla dacă
+cineva ar apela-o direct, fără să treacă prin interfață~\cite{owasp-top10}?
+
+\section{Autentificare și parole}
+
+Parolele nu sunt niciodată stocate în clar; gestionarea lor este delegată
+componentei \texttt{PasswordHasher} din ASP.NET Identity~\cite{identity-docs},
+care aplică \emph{hashing} cu \emph{salt} unic per utilizator, în linie cu
+recomandările privind gestionarea autentificatorilor de tip memorat-secret
+publicate de NIST~\cite{nist-800-63b}.
+
+Autentificarea unui cont blocat este respinsă înainte ca sesiunea să fie creată.
+Pentru a evita confirmarea existenței unui cont blocat unui atacator care nu
+cunoaște parola corectă, verificarea parolei se face separat de autentificarea
+efectivă -- mesajul de blocare apare exclusiv când parola introdusă este corectă:
+
+\begin{lstlisting}[caption={Verificarea blocării unui cont, ulterior validării parolei}]
+var passwordCheck = await _signInManager.CheckPasswordSignInAsync(
+    user, Input.Password, lockoutOnFailure: false);
+
+if (passwordCheck.Succeeded)
+{
+    if (user.BannedUntil.HasValue &&
+        user.BannedUntil.Value > DateTime.UtcNow)
+    {
+        ModelState.AddModelError(string.Empty, banMessage);
+        return Page();
+    }
+    await _signInManager.SignInAsync(user, isPersistent: false);
+    return LocalRedirect(returnUrl);
+}
+\end{lstlisting}
+
+\section{Autorizare bazată pe roluri}
+
+Panoul de administrare, precum și fiecare acțiune sensibilă din
+\texttt{AdminController} (blocare, ștergere, promovare la rolul de administrator,
+gestionarea materiilor) sunt protejate prin \texttt{[Authorize(Roles = "Admin")]}
+~\cite{identity-roles-docs}, verificat de \emph{middleware}-ul de autorizare al
+ASP.NET Core, înaintea execuției oricărui cod din controller. Aceeași filosofie
+a fost aplicată restricțiilor de domeniu care nu se mapează pe un rol Identity:
+doar un utilizator cu \texttt{Role = "Teach"} poate atașa fișiere unei
+conversații, verificare realizată în endpoint-ul de încărcare.
+
+\section{Protecția formularului de înregistrare}
+
+Formularul de înregistrare este protejat prin \emph{Google reCAPTCHA
+v2}~\cite{recaptcha-docs}. Token-ul generat de widget-ul din pagină este trimis
+către server și verificat printr-un apel către serviciul oficial de validare al
+Google, înainte ca vreun cont să fie creat:
+
+\begin{lstlisting}[caption={Verificarea token-ului reCAPTCHA (fragment)}]
+public async Task<bool> VerifyAsync(
+    string? recaptchaResponse, string? remoteIp)
+{
+    if (string.IsNullOrWhiteSpace(recaptchaResponse))
+        return false;
+
+    var response = await client.PostAsync(
+        "https://www.google.com/recaptcha/api/siteverify",
+        new FormUrlEncodedContent(parameters));
+
+    var json = await response.Content.ReadAsStringAsync();
+    using var doc = JsonDocument.Parse(json);
+    return doc.RootElement.TryGetProperty("success", out var s)
+           && s.GetBoolean();
+}
+\end{lstlisting}
+
+Dacă cheia secretă nu este configurată, verificarea eșuează implicit (\emph{fail
+closed}) -- înregistrarea rămâne blocată până la configurarea corectă, în loc să
+permită tuturor înregistrărilor să treacă nevalidate.
+
+\section{Validarea fișierelor încărcate}
+
+Atât avatarele de profil, cât și fișierele atașate conversațiilor sunt validate
+pe server, nu doar prin atributul \texttt{accept} al elementului HTML de tip
+fișier (ușor de ocolit): tipul este verificat printr-o listă albă de extensii,
+dimensiunea este limitată explicit, iar numele fișierului salvat pe disc este
+generat aleator, pentru a preveni atât suprascrierea accidentală a unui fișier
+existent, cât și deducerea, din nume, a provenienței acestuia.
+
+\section{Restricționarea accesului la conversații}
+
+O conversație există numai între doi utilizatori legați printr-o cerere de
+colaborare acceptată. Interfața respectă regula în mod natural -- butonul de chat
+apare exclusiv în lista de colaborări --, dar ea nu poate rămâne doar acolo: un
+utilizator autentificat ar putea deschide manual adresa unei conversații cu orice
+cont, indicând identificatorul acestuia în URL. Verificarea este, prin urmare,
+repetată pe server:
+
+\begin{lstlisting}[caption={Verificarea existenței unei colaborări acceptate}]
+var areConnected = await _context.HireRequests.AnyAsync(h =>
+    h.IsAccepted &&
+    ((h.RequesterId == currentUserId && h.TargetId == userId) ||
+     (h.RequesterId == userId && h.TargetId == currentUserId)));
+
+if (!areConnected) return Forbid();
+\end{lstlisting}
+
+Aceeași condiție este aplicată atât în endpoint-ul care persistă un mesaj text,
+cât și în cel de încărcare a fișierelor.
+
+\section{Protecția împotriva atacurilor CSRF}
+
+Un atac de tip \emph{Cross-Site Request Forgery} exploatează faptul că browser-ul
+atașează automat \emph{cookie}-ul de sesiune oricărei cereri către aplicație,
+inclusiv uneia inițiate de pe un site străin: o pagină ostilă poate trimite, în
+numele unui administrator autentificat, o cerere de ștergere a unui
+cont~\cite{owasp-top10}.
+
+Contramăsura standard este un \emph{token} unic per sesiune, inclus în fiecare
+formular și validat la primirea cererii. În ASP.NET Core, paginile Razor îl
+validează automat, în timp ce controllerele MVC nu o fac decât dacă li se cere
+explicit -- exact categoria de acțiuni sensibile din \texttt{AdminController} și
+\texttt{HireController}. Validarea a fost, de aceea, activată global:
+
+\begin{lstlisting}[caption={Activarea globală a validării token-ului antiforgery}]
+builder.Services.AddAntiforgery(options =>
+    options.HeaderName = "RequestVerificationToken");
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
+\end{lstlisting}
+
+Formularele aplicației sunt generate prin \emph{tag helper}-ul de formular, care
+include deja token-ul ca un câmp ascuns, deci nicio vizualizare nu a trebuit
+modificată. Singurele două cereri care nu provin dintr-un formular -- trimiterea
+unui mesaj și încărcarea unui fișier -- transmit token-ul printr-un antet HTTP.
+
+\section{Prevenirea falsificării expeditorului unui mesaj}
+
+Endpoint-ul API prin care se persistă un mesaj nu are voie să aibă încredere în
+identificatorul de expeditor trimis de client; acesta este întotdeauna suprascris
+cu identitatea utilizatorului autentificat:
+
+\begin{lstlisting}[caption={Suprascrierea expeditorului cu identitatea autentificată}]
+var senderId = _userManager.GetUserId(User);
+if (senderId == null) return Unauthorized();
+
+message.SenderId = senderId;
+\end{lstlisting}
+
+Fără această verificare, un utilizator autentificat ar fi putut construi manual
+o cerere HTTP care să pară provenită de la un alt cont.
+
+\section{Protecția integrității datelor și a rolului de administrator}
+
+Ștergerea unui cont elimină explicit toate înregistrările care fac referire la
+acel utilizator -- mesajele trimise și primite, cererile de colaborare și
+codurile OTP -- înainte de ștergerea efectivă a contului, evitând înregistrările
+orfane.
+
+Un administrator nu se poate retrograda, bloca sau șterge pe sine, iar niciun
+administrator nu poate fi blocat sau șters de un altul, pentru ca platforma să nu
+rămână, accidental sau prin intervenție rău-intenționată, fără niciun cont capabil
+să acceseze panoul.
+
+\section{Confidențialitatea datelor utilizatorilor}
+
+Platforma stochează date cu caracter personal (nume, email, biografie, avatar,
+conținutul mesajelor), motiv pentru care principiile de minimizare prevăzute de
+Regulamentul General privind Protecția Datelor~\cite{gdpr} au fost avute în vedere
+la proiectare: utilizatorul își poate elimina avatarul oricând, iar ștergerea unui
+cont înlătură și fișierul de pe disc, nu doar rândul din baza de date. Codurile OTP
+expiră în 10 minute și sunt șterse automat, reducând fereastra în care ar putea fi
+exploatate dacă baza de date ar fi compromisă.
